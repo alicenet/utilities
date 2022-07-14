@@ -1,0 +1,289 @@
+syntax = "proto3";
+
+package api.alice.v1;
+
+import "google/api/annotations.proto";
+
+// AliceService provides insight into the AliceNet chain without needing to directly contact a validator node.
+service AliceService {
+  // ListStores for a given address.
+  rpc ListStores(ListStoresRequest) returns (ListStoresResponse) {
+    option (google.api.http) = {
+      get: "/v1/addresses/{address}/stores"
+    };
+  }
+
+  // GetStoreValue for a given address, data store and index.
+  rpc GetStoreValue(GetStoreValueRequest) returns (GetStoreValueResponse) {
+    option (google.api.http) = {
+      get: "/v1/addresses/{address}/stores/{data_store}/indexes/{index}"
+    };
+  }
+
+  // ListTransactionsForAddress that an address has participated in.
+  rpc ListTransactionsForAddress(ListTransactionsForAddressRequest) returns (ListTransactionsForAddressResponse) {
+    option (google.api.http) = {
+      get: "/v1/addresses/{address}/transactions"
+    };
+  }
+
+  // GetBalance for an address.
+  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
+    option (google.api.http) = {
+      get: "/v1/addresses/{address}/balance"
+    };
+  }
+
+  // GetTransaction contents.
+  rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse) {
+    option (google.api.http) = {
+      get: "/v1/transactions/{transaction}"
+    };
+  }
+
+  // GetBlock contents.
+  rpc GetBlock(GetBlockRequest) returns (GetBlockResponse) {
+    option (google.api.http) = {
+      get: "/v1/blocks/{height}"
+    };
+  }
+
+  // ListBlocks starting at the most recent.
+  rpc ListBlocks(ListBlocksRequest) returns (ListBlocksResponse) {
+    option (google.api.http) = {
+      get: "/v1/blocks"
+    };
+  }
+
+  // ListTransactions starting at the most recent.
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/transactions"
+    };
+  }
+}
+
+// ListStoresRequest to call the service.
+message ListStoresRequest {
+  // The address to list the stores for.
+  string address = 1;
+}
+
+// ListStoresResponse from the service.
+message ListStoresResponse {
+  // Working on the data types here.
+}
+
+// GetStoreValueRequest to call the service.
+message GetStoreValueRequest {
+  // The address to get the stored value for.
+  string address = 1;
+  // The data_store to pull the value from.
+  string data_store = 2;
+  // The index in the data_store to pull the value from.
+  string index = 3;
+}
+
+// GetStoreValueResponse from the service.
+message GetStoreValueResponse {
+  // The value stored for a given address/data store/index.
+  string value = 1;
+}
+
+// ListTransactionsForAddressRequest to call the service.
+message ListTransactionsForAddressRequest {
+  // The address to list the transactions for.
+  string address = 1;
+  // The pagination limit in the List request.
+  int64 limit = 2;
+  // The pagination offset in the List request.
+  int64 offset = 3;
+}
+// ListTransactionsForAddressResponse from the service.
+message ListTransactionsForAddressResponse {
+  // A list of transaction hashes contained for the address.
+  repeated string transaction_hashes = 1;
+}
+
+// GetBalanceRequest to call the service.
+message GetBalanceRequest {
+  // The address to get the balance for.
+  string address = 1;
+}
+
+// GetBalanceResponse from the service.
+message GetBalanceResponse {
+  // The balance of the requested address.
+  string balance = 1;
+}
+
+// GetTransactionRequest to call the service.
+message GetTransactionRequest {
+  // The transaction hash to request.
+  string transaction = 1;
+}
+
+// GetTransactionResponse from the service.
+message GetTransactionResponse {
+  // The transaction for the given hash.
+  Transaction transaction = 1;
+}
+
+// GetBlockRequest to call the service.
+message GetBlockRequest {
+  // The height of the block to request.
+  uint32 height = 1;
+}
+
+// GetBlockResponse from the service.
+message GetBlockResponse {
+  // The block corresponding to the specified height.
+  Block block = 1;
+}
+
+// ListBlocksRequest to call the service.
+message ListBlocksRequest {
+  // The pagination limit in the List request.
+  int64 limit = 1;
+  // The pagination offset in the List request.
+  int64 offset = 2;
+}
+
+// ListBlocksResponse from the service.
+message ListBlocksResponse {
+  // The heights of the most recent blocks.
+  repeated uint32 heights = 1;
+}
+
+// ListTransactionsRequest to call the service.
+message ListTransactionsRequest {
+  // The pagination limit in the List request.
+  int64 limit = 1;
+  // The pagination offset in the List request.
+  int64 offset = 2;
+}
+
+// ListTransactionsResponse from the service.
+message ListTransactionsResponse {
+  // The hashes of the most recent transactions.
+  repeated string transaction_hashes = 1;
+}
+
+// A Block on the AliceNet chain.
+message Block {
+  // The ID of the chain holding this block.
+  uint32 chain_id = 1;
+  // The height of this block since genesis.
+  uint32 height = 2;
+  // The number of transactions contained in this block.
+  uint32 transaction_count = 3;
+  // The hash of the previous block.
+  string previous_block_hash = 4;
+  // The hash of the transaction root.
+  string transaction_root_hash = 5;
+  // The hash of the state root.
+  string state_root_hash = 6;
+  // The hash of the header root.
+  string header_root_hash = 7;
+  // The group signature hash.
+  string group_signature_hash = 8;
+  // A list of transaction hashes contained in this block.
+  repeated string transaction_hashes = 9;
+}
+
+// A Transaction on the AliceNet chain.
+message Transaction {
+  // Input to the transaction.
+  message Input {
+    // The ID of the chain contianing this transaction.
+    uint32 chain_id = 1;
+    // The hash of this transaction.
+    string transaction_hash = 2;
+    // The hash of the consumed transaction.
+    string consumed_transaction_hash = 3;
+    // The index of the consumed transaction.
+    int64 consumed_transaction_index = 4;
+    // A signature of the input.
+    string signature = 5;
+  }
+
+  // Output from the transaction.
+  message Output {
+    // An AtomicSwap on the AliceNet chain.
+    message AtomicSwap {
+      // The hash of the transaction.
+      string transaction_hash = 1;
+      // The ID of the chain containing this transaction.
+      uint32 chain_id = 2;
+      // The value of the swap.
+      string value = 3;
+      // The index of the output transaction.
+      uint32 transaction_out_index = 4;
+      // When this swap was issued at.
+      uint32 issued_at = 5;
+      // Exp?
+      uint32 exp = 6;
+      // The owner of the swap.
+      string owner = 7;
+      // The fee paid for this swap.
+      string fee = 8;
+    }
+
+    // A ValueStore on the AliceNet chain.
+    message ValueStore {
+      // The hash of the transaction.
+      string transaction_hash = 1;
+      // The ID of the chain containing this transaction.
+      uint32 chain_id = 2;
+      // The value of the store.
+      string value = 3;
+      // The index of the output transaction.
+      uint32 transaction_out_index = 4;
+      // The owner of the value store.
+      string owner = 5;
+      // The fee paid for this store.
+      string fee = 6;
+    }
+
+    // A DataStore on the AliceNet chain.
+    message DataStore {
+      // The signature of this data store.
+      string signature = 1;
+      // The hash of the transaction.
+      string transaction_hash = 2;
+      // The ID of the chain containing this transaction.
+      uint32 chain_id = 3;
+      // The index of this data store.
+      string index = 4;
+      // When this data store was issued at.
+      uint32 issued_at = 5;
+      // The deposit for this data store.
+      string deposit = 6;
+      // The raw data to be stored.
+      string raw_data = 7;
+      // The transaction out index.
+      uint32 transaction_out_index = 8;
+      // The owner of the data store.
+      string owner = 9;
+      // The fee paid for this store.
+      string fee = 10;
+    }
+
+    // Unspect transaction outputs can be one of several types.
+    oneof unspect_transaction_output {
+      // An atomic swap.
+      AtomicSwap atomic_swap = 1;
+      // A value store.
+      ValueStore value_store = 2;
+      // A data store.
+      DataStore data_store = 3;
+    }
+  }
+
+  // The hash of this transaction.
+  string hash = 1;
+  // The inputs to this transaction.
+  repeated Input inputs = 2;
+  // The outputs from this transaction.
+  repeated Output outputs = 3;
+}

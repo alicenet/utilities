@@ -1,0 +1,684 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "api/alice/v1/alice.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "AliceService"
+    }
+  ],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/v1/addresses/{address}/balance": {
+      "get": {
+        "summary": "GetBalance for an address.",
+        "operationId": "AliceService_GetBalance",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetBalanceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "The address to get the balance for.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": ["AliceService"]
+      }
+    },
+    "/v1/addresses/{address}/stores": {
+      "get": {
+        "summary": "ListStores for a given address.",
+        "operationId": "AliceService_ListStores",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListStoresResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "The address to list the stores for.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": ["AliceService"]
+      }
+    },
+    "/v1/addresses/{address}/stores/{dataStore}/indexes/{index}": {
+      "get": {
+        "summary": "GetStoreValue for a given address, data store and index.",
+        "operationId": "AliceService_GetStoreValue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetStoreValueResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "The address to get the stored value for.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataStore",
+            "description": "The data_store to pull the value from.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "index",
+            "description": "The index in the data_store to pull the value from.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": ["AliceService"]
+      }
+    },
+    "/v1/addresses/{address}/transactions": {
+      "get": {
+        "summary": "ListTransactionsForAddress that an address has participated in.",
+        "operationId": "AliceService_ListTransactionsForAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListTransactionsForAddressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "The address to list the transactions for.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "description": "The pagination size in the List request.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageToken",
+            "description": "The pagination token in the List request.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": ["AliceService"]
+      }
+    },
+    "/v1/blocks": {
+      "get": {
+        "summary": "ListBlocks starting at the most recent.",
+        "operationId": "AliceService_ListBlocks",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListBlocksResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageSize",
+            "description": "The pagination size in the List request.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageToken",
+            "description": "The pagination token in the List request.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": ["AliceService"]
+      }
+    },
+    "/v1/blocks/{height}": {
+      "get": {
+        "summary": "GetBlock contents.",
+        "operationId": "AliceService_GetBlock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetBlockResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "height",
+            "description": "The height of the block to request.",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": ["AliceService"]
+      }
+    },
+    "/v1/transactions": {
+      "get": {
+        "summary": "ListTransactions starting at the most recent.",
+        "operationId": "AliceService_ListTransactions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListTransactionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageSize",
+            "description": "The pagination size in the List request.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageToken",
+            "description": "The pagination token in the List request.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": ["AliceService"]
+      }
+    },
+    "/v1/transactions/{transaction}": {
+      "get": {
+        "summary": "GetTransaction contents.",
+        "operationId": "AliceService_GetTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "transaction",
+            "description": "The transaction hash to request.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": ["AliceService"]
+      }
+    }
+  },
+  "definitions": {
+    "OutputAtomicSwap": {
+      "type": "object",
+      "properties": {
+        "transactionHash": {
+          "type": "string",
+          "description": "The hash of the transaction."
+        },
+        "chainId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The ID of the chain containing this transaction."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the swap."
+        },
+        "transactionOutIndex": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The index of the output transaction."
+        },
+        "issuedAt": {
+          "type": "integer",
+          "format": "int64",
+          "description": "When this swap was issued at."
+        },
+        "exp": {
+          "type": "integer",
+          "format": "int64",
+          "title": "Exp?"
+        },
+        "owner": {
+          "type": "string",
+          "description": "The owner of the swap."
+        },
+        "fee": {
+          "type": "string",
+          "description": "The fee paid for this swap."
+        }
+      },
+      "description": "An AtomicSwap on the AliceNet chain."
+    },
+    "OutputDataStore": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "The signature of this data store."
+        },
+        "transactionHash": {
+          "type": "string",
+          "description": "The hash of the transaction."
+        },
+        "chainId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The ID of the chain containing this transaction."
+        },
+        "index": {
+          "type": "string",
+          "description": "The index of this data store."
+        },
+        "issuedAt": {
+          "type": "integer",
+          "format": "int64",
+          "description": "When this data store was issued at."
+        },
+        "deposit": {
+          "type": "string",
+          "description": "The deposit for this data store."
+        },
+        "rawData": {
+          "type": "string",
+          "description": "The raw data to be stored."
+        },
+        "transactionOutIndex": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The transaction out index."
+        },
+        "owner": {
+          "type": "string",
+          "description": "The owner of the data store."
+        },
+        "fee": {
+          "type": "string",
+          "description": "The fee paid for this store."
+        }
+      },
+      "description": "A DataStore on the AliceNet chain."
+    },
+    "OutputValueStore": {
+      "type": "object",
+      "properties": {
+        "transactionHash": {
+          "type": "string",
+          "description": "The hash of the transaction."
+        },
+        "chainId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The ID of the chain containing this transaction."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the store."
+        },
+        "transactionOutIndex": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The index of the output transaction."
+        },
+        "owner": {
+          "type": "string",
+          "description": "The owner of the value store."
+        },
+        "fee": {
+          "type": "string",
+          "description": "The fee paid for this store."
+        }
+      },
+      "description": "A ValueStore on the AliceNet chain."
+    },
+    "TransactionInput": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The ID of the chain contianing this transaction."
+        },
+        "transactionHash": {
+          "type": "string",
+          "description": "The hash of this transaction."
+        },
+        "consumedTransactionHash": {
+          "type": "string",
+          "description": "The hash of the consumed transaction."
+        },
+        "consumedTransactionIndex": {
+          "type": "string",
+          "format": "int64",
+          "description": "The index of the consumed transaction."
+        },
+        "signature": {
+          "type": "string",
+          "description": "A signature of the input."
+        }
+      },
+      "description": "Input to the transaction."
+    },
+    "TransactionOutput": {
+      "type": "object",
+      "properties": {
+        "atomicSwap": {
+          "$ref": "#/definitions/OutputAtomicSwap",
+          "description": "An atomic swap."
+        },
+        "valueStore": {
+          "$ref": "#/definitions/OutputValueStore",
+          "description": "A value store."
+        },
+        "dataStore": {
+          "$ref": "#/definitions/OutputDataStore",
+          "description": "A data store."
+        }
+      },
+      "description": "Output from the transaction."
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Block": {
+      "type": "object",
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The ID of the chain holding this block."
+        },
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height of this block since genesis."
+        },
+        "transactionCount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The number of transactions contained in this block."
+        },
+        "previousBlockHash": {
+          "type": "string",
+          "description": "The hash of the previous block."
+        },
+        "transactionRootHash": {
+          "type": "string",
+          "description": "The hash of the transaction root."
+        },
+        "stateRootHash": {
+          "type": "string",
+          "description": "The hash of the state root."
+        },
+        "headerRootHash": {
+          "type": "string",
+          "description": "The hash of the header root."
+        },
+        "groupSignatureHash": {
+          "type": "string",
+          "description": "The group signature hash."
+        },
+        "transactionHashes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of transaction hashes contained in this block."
+        }
+      },
+      "description": "A Block on the AliceNet chain."
+    },
+    "v1GetBalanceResponse": {
+      "type": "object",
+      "properties": {
+        "balance": {
+          "type": "number",
+          "format": "double",
+          "description": "The balance of the requested address."
+        }
+      },
+      "description": "GetBalanceResponse from the service."
+    },
+    "v1GetBlockResponse": {
+      "type": "object",
+      "properties": {
+        "block": {
+          "$ref": "#/definitions/v1Block",
+          "description": "The block corresponding to the specified height."
+        }
+      },
+      "description": "GetBlockResponse from the service."
+    },
+    "v1GetStoreValueResponse": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The value stored for a given address/data store/index."
+        }
+      },
+      "description": "GetStoreValueResponse from the service."
+    },
+    "v1GetTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "$ref": "#/definitions/v1Transaction",
+          "description": "The transaction for the given hash."
+        }
+      },
+      "description": "GetTransactionResponse from the service."
+    },
+    "v1ListBlocksResponse": {
+      "type": "object",
+      "properties": {
+        "heights": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "description": "The heights of the most recent blocks."
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The pagination size in the List request."
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "The next pagination token in the List response. It should be used as page_token for the following request. An empty value means no more result."
+        }
+      },
+      "description": "ListBlocksResponse from the service."
+    },
+    "v1ListStoresResponse": {
+      "type": "object",
+      "description": "ListStoresResponse from the service."
+    },
+    "v1ListTransactionsForAddressResponse": {
+      "type": "object",
+      "properties": {
+        "transactionHashes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of transaction hashes contained for the address."
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The pagination size in the List request."
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "The next pagination token in the List response. It should be used as page_token for the following request. An empty value means no more result."
+        }
+      },
+      "description": "ListTransactionsForAddressResponse from the service."
+    },
+    "v1ListTransactionsResponse": {
+      "type": "object",
+      "properties": {
+        "transactionHashes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The hashes of the most recent transactions."
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The pagination size in the List request."
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "The next pagination token in the List response. It should be used as page_token for the following request. An empty value means no more result."
+        }
+      },
+      "description": "ListTransactionsResponse from the service."
+    },
+    "v1Transaction": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "The hash of this transaction."
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TransactionInput"
+          },
+          "description": "The inputs to this transaction."
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TransactionOutput"
+          },
+          "description": "The outputs from this transaction."
+        }
+      },
+      "description": "A Transaction on the AliceNet chain."
+    }
+  }
+}
