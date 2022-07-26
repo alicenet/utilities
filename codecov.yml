@@ -1,0 +1,8 @@
+ignore:
+  - "api/**"
+  - "cmd/**"
+coverage:
+  status:
+    patch:
+      default:
+        target: 90%
