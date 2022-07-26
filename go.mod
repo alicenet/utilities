@@ -3,7 +3,7 @@ module github.com/alicenet/indexer
 go 1.18
 
 require (
-	cloud.google.com/go/spanner v1.34.1
+	cloud.google.com/go/spanner v1.36.0
 	github.com/alicenet/alicenet v0.0.0-20220702030912-d726ce405a58
 	github.com/bufbuild/buf v1.6.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
