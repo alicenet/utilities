@@ -78,7 +78,7 @@ linters:
     - wsl
 linters-settings:
   funlen:
-    lines: 75
+    lines: 80
   gci:
     sections:
       - standard

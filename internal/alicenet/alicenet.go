@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"cloud.google.com/go/spanner"
 
@@ -203,6 +204,7 @@ type Block struct {
 	HeaderRootHash      string
 	GroupSignatureHash  string
 	TransactionHashes   []string
+	ObserveTime         time.Time
 }
 
 // Key for the Block.
@@ -228,6 +230,7 @@ func (Block) List(limit, offset int64) spanner.Statement {
 type Transaction struct {
 	Height          int64
 	TransactionHash string
+	ObserveTime     time.Time
 }
 
 // Key for the Transaction.
@@ -259,6 +262,7 @@ type TransactionInput struct {
 	ConsumedTransactionHash  string
 	ConsumedTransactionIndex int64
 	Signature                string
+	ObserveTime              time.Time
 }
 
 // Key for the Transaction.
@@ -292,6 +296,7 @@ type AtomicSwap struct {
 	Exp                 int64
 	Owner               string
 	Fee                 string
+	ObserveTime         time.Time
 }
 
 // Key for the AtomicSwaps.
@@ -324,6 +329,7 @@ type ValueStore struct {
 	TransactionOutIndex int64
 	Owner               string
 	Fee                 string
+	ObserveTime         time.Time
 }
 
 // Key for the ValueStores.
@@ -360,6 +366,7 @@ type DataStore struct {
 	TransactionOutIndex int64
 	Owner               string
 	Fee                 string
+	ObserveTime         time.Time
 }
 
 // Key for the DataStores.
@@ -413,6 +420,7 @@ func (Account) List(limit, offset int64) spanner.Statement {
 type AccountTransaction struct {
 	Address         string
 	TransactionHash string
+	ObserveTime     time.Time
 }
 
 // Key for the AccountTransaction.
