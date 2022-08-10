@@ -84,7 +84,7 @@ linters-settings:
       - default
       - prefix(github.com/alicenet)
   gofumpt:
-    lang-version: "1.18"
+    lang-version: "1.19"
     module-path: github.com/alicenet/indexer
     extra-rules: true
   importas:
