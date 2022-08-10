@@ -14,7 +14,7 @@
 *.swagger.json    linguist-generated=true
 *.mockgen.go      -diff -merge
 *.mockgen.go      linguist-generated=true
-go.mod            -diff -merge
-go.mod            linguist-generated=true
+go.sum            -diff -merge
+go.sum            linguist-generated=true
 package-lock.json -diff -merge
 package-lock.json linguist-generated=true
