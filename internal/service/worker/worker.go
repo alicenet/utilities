@@ -118,6 +118,7 @@ func createBlock(blockHeader *proto.BlockHeader) alicenet.Block {
 		HeaderRootHash:      blockHeader.BClaims.HeaderRoot,
 		GroupSignatureHash:  blockHeader.SigGroup,
 		TransactionHashes:   blockHeader.TxHshLst,
+		ObserveTime:         spanner.CommitTimestamp,
 	}
 
 	return block
@@ -166,6 +167,7 @@ func (s *Service) pushTransactionOutput(ctx context.Context, txn *alicenet.Mined
 				Exp:                 int64(vout.AtomicSwap.ASPreImage.Exp),
 				Owner:               vout.AtomicSwap.ASPreImage.Owner,
 				Fee:                 vout.AtomicSwap.ASPreImage.Fee,
+				ObserveTime:         spanner.CommitTimestamp,
 			}
 			if err := s.stores.AtomicSwaps.Insert(ctx, output); err != nil {
 				return fmt.Errorf("output: %w", err)
@@ -191,6 +193,7 @@ func (s *Service) pushTransactionOutput(ctx context.Context, txn *alicenet.Mined
 				TransactionOutIndex: int64(vout.DataStore.DSLinker.DSPreImage.TXOutIdx),
 				Owner:               vout.DataStore.DSLinker.DSPreImage.Owner,
 				Fee:                 vout.DataStore.DSLinker.DSPreImage.Fee,
+				ObserveTime:         spanner.CommitTimestamp,
 			}
 			if err := s.stores.DataStores.Insert(ctx, output); err != nil {
 				return fmt.Errorf("output: %w", err)
@@ -211,6 +214,7 @@ func (s *Service) pushTransactionOutput(ctx context.Context, txn *alicenet.Mined
 				TransactionOutIndex: int64(vout.ValueStore.VSPreImage.TXOutIdx),
 				Owner:               vout.ValueStore.VSPreImage.Owner,
 				Fee:                 vout.ValueStore.VSPreImage.Fee,
+				ObserveTime:         spanner.CommitTimestamp,
 			}
 			if err := s.stores.ValueStores.Insert(ctx, output); err != nil {
 				return fmt.Errorf("output: %w", err)
@@ -279,6 +283,7 @@ func (s *Service) pushTransactionInput(ctx context.Context, txn *alicenet.MinedT
 			ConsumedTransactionHash:  input.TXInLinker.TXInPreImage.ConsumedTxHash,
 			ConsumedTransactionIndex: int64(input.TXInLinker.TXInPreImage.ConsumedTxIdx),
 			Signature:                input.Signature,
+			ObserveTime:              spanner.CommitTimestamp,
 		}
 
 		if err := s.stores.TransactionInputs.Insert(ctx, input); err != nil {
