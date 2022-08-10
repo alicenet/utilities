@@ -33,8 +33,9 @@ func (a APIError) Error() string {
 	return fmt.Sprintf("%s: %s", a.Status, a.Message)
 }
 
-//go:generate go run github.com/golang/mock/mockgen -package mocks -destination ../mocks/alicenet.mockgen.go . Interface
 // The Interface to working with alicenet.
+//
+//go:generate go run github.com/golang/mock/mockgen -package mocks -destination ../mocks/alicenet.mockgen.go . Interface
 type Interface interface {
 	Height(context.Context) (uint32, error)
 	BlockHeader(context.Context, uint32) (*proto.BlockHeader, error)
