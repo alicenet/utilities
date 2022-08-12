@@ -157,30 +157,6 @@ func (s *Service) pushTransaction(
 func (s *Service) pushTransactionOutput(ctx context.Context, txn *alicenet.MinedTransactionResponse) error {
 	for _, vout := range txn.Tx.Vout {
 		switch {
-		case vout.AtomicSwap != nil:
-			output := alicenet.AtomicSwap{
-				TransactionHash:     vout.AtomicSwap.TxHash,
-				ChainID:             int64(vout.AtomicSwap.ASPreImage.ChainID),
-				Value:               vout.AtomicSwap.ASPreImage.Value,
-				TransactionOutIndex: int64(vout.AtomicSwap.ASPreImage.TXOutIdx),
-				IssuedAt:            int64(vout.AtomicSwap.ASPreImage.IssuedAt),
-				Exp:                 int64(vout.AtomicSwap.ASPreImage.Exp),
-				Owner:               vout.AtomicSwap.ASPreImage.Owner,
-				Fee:                 vout.AtomicSwap.ASPreImage.Fee,
-				ObserveTime:         spanner.CommitTimestamp,
-			}
-			if err := s.stores.AtomicSwaps.Insert(ctx, output); err != nil {
-				return fmt.Errorf("output: %w", err)
-			}
-
-			if err := s.pushAccount(
-				ctx,
-				vout.AtomicSwap.ASPreImage.Owner,
-				vout.AtomicSwap.TxHash,
-				"0",
-			); err != nil {
-				return fmt.Errorf("output: %w", err)
-			}
 		case vout.DataStore != nil:
 			output := alicenet.DataStore{
 				Signature:           vout.DataStore.Signature,
@@ -204,6 +180,15 @@ func (s *Service) pushTransactionOutput(ctx context.Context, txn *alicenet.Mined
 				vout.DataStore.DSLinker.TxHash,
 				"0",
 			); err != nil {
+				return fmt.Errorf("output: %w", err)
+			}
+
+			if err := s.pushStoredData(
+				ctx,
+				vout.DataStore.DSLinker.DSPreImage.Owner,
+				vout.DataStore.DSLinker.DSPreImage.Index,
+				int64(vout.DataStore.DSLinker.DSPreImage.IssuedAt),
+				vout.DataStore.DSLinker.DSPreImage.RawData); err != nil {
 				return fmt.Errorf("output: %w", err)
 			}
 		case vout.ValueStore != nil:
@@ -264,10 +249,28 @@ func (s *Service) pushAccount(ctx context.Context, owner, hash, amount string) e
 	txn := alicenet.AccountTransaction{
 		Address:         owner,
 		TransactionHash: hash,
+		ObserveTime:     spanner.CommitTimestamp,
 	}
 
 	if err := s.stores.AccountTransactions.Insert(ctx, txn); err != nil {
 		return fmt.Errorf("account: %w", err)
+	}
+
+	return nil
+}
+
+// pushStoredData to permanent stores.
+func (s *Service) pushStoredData(ctx context.Context, owner, index string, issuedAt int64, value string) error {
+	accountStore := alicenet.AccountStore{
+		Address:     owner,
+		Index:       index,
+		IssuedAt:    issuedAt,
+		Value:       value,
+		ObserveTime: spanner.CommitTimestamp,
+	}
+
+	if err := s.stores.AccountStores.Insert(ctx, accountStore); err != nil {
+		return fmt.Errorf("account store: %w", err)
 	}
 
 	return nil

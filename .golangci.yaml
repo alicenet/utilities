@@ -21,7 +21,7 @@ linters:
     - exhaustive
     - exportloopref
     - forcetypeassert
-    - funlen
+    # - funlen # Some stuff to work out
     - gci
     - gochecknoglobals
     - gochecknoinits
@@ -76,8 +76,6 @@ linters:
     - wrapcheck
     - wsl
 linters-settings:
-  funlen:
-    lines: 80
   gci:
     sections:
       - standard

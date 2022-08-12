@@ -104,16 +104,6 @@ func request_AliceService_GetStoreValue_0(ctx context.Context, marshaler runtime
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "address", err)
 	}
 
-	val, ok = pathParams["data_store"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "data_store")
-	}
-
-	protoReq.DataStore, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "data_store", err)
-	}
-
 	val, ok = pathParams["index"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "index")
@@ -148,16 +138,6 @@ func local_request_AliceService_GetStoreValue_0(ctx context.Context, marshaler r
 	protoReq.Address, err = runtime.String(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "address", err)
-	}
-
-	val, ok = pathParams["data_store"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "data_store")
-	}
-
-	protoReq.DataStore, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "data_store", err)
 	}
 
 	val, ok = pathParams["index"]
@@ -508,7 +488,7 @@ func RegisterAliceServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/api.alice.v1.AliceService/GetStoreValue", runtime.WithHTTPPathPattern("/v1/addresses/{address}/stores/{data_store}/indexes/{index}"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/api.alice.v1.AliceService/GetStoreValue", runtime.WithHTTPPathPattern("/v1/addresses/{address}/stores/{index}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -728,7 +708,7 @@ func RegisterAliceServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/api.alice.v1.AliceService/GetStoreValue", runtime.WithHTTPPathPattern("/v1/addresses/{address}/stores/{data_store}/indexes/{index}"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/api.alice.v1.AliceService/GetStoreValue", runtime.WithHTTPPathPattern("/v1/addresses/{address}/stores/{index}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -870,7 +850,7 @@ func RegisterAliceServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 var (
 	pattern_AliceService_ListStores_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "addresses", "address", "stores"}, ""))
 
-	pattern_AliceService_GetStoreValue_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6}, []string{"v1", "addresses", "address", "stores", "data_store", "indexes", "index"}, ""))
+	pattern_AliceService_GetStoreValue_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "addresses", "address", "stores", "index"}, ""))
 
 	pattern_AliceService_ListTransactionsForAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "addresses", "address", "transactions"}, ""))
 
