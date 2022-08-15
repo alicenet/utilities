@@ -14,14 +14,14 @@ import (
 type Store[T Storable] interface {
 	Insert(context.Context, T) error
 	Get(context.Context, spanner.Key) (T, error)
-	List(context.Context, int64, int64) ([]T, error)
+	List(context.Context, spanner.Key, int64, int64) ([]T, error)
 }
 
 // Storable in a database.
 type Storable interface {
 	Key() spanner.Key
 	Table() string
-	List(int64, int64) spanner.Statement
+	List(prefix spanner.Key, limit, offset int64) spanner.Statement
 }
 
 // getColumnsForType helps to simplify the Spanner logic for what columns to retrieve.
@@ -83,12 +83,12 @@ func (s *Spanner[T]) Get(ctx context.Context, key spanner.Key) (T, error) {
 }
 
 // List elements with limit and offset for pagination.
-func (s *Spanner[T]) List(ctx context.Context, limit, offset int64) ([]T, error) {
+func (s *Spanner[T]) List(ctx context.Context, prefix spanner.Key, limit, offset int64) ([]T, error) {
 	var item T
 
 	var items []T
 
-	iter := s.client.Single().Query(ctx, item.List(limit, offset))
+	iter := s.client.Single().Query(ctx, item.List(prefix, limit, offset))
 
 	for {
 		row, err := iter.Next()

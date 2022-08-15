@@ -9,6 +9,7 @@ import (
 
 func TestListStores(t *testing.T) {
 	t.Parallel()
+	t.Skip("skipping until we add memory stores")
 
 	s := Service{}
 	ctx := context.Background()

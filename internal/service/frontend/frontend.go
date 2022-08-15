@@ -12,7 +12,10 @@ import (
 	"github.com/alicenet/indexer/internal/alicenet"
 )
 
-const defaultLimit = 100
+const (
+	defaultLimit = 100
+	maxLimit     = 1024
+)
 
 type Service struct {
 	stores *alicenet.Stores
@@ -25,24 +28,66 @@ func NewService(stores *alicenet.Stores) *Service {
 }
 
 func (s *Service) ListStores(
-	context.Context, *alicev1.ListStoresRequest) (
+	ctx context.Context, req *alicev1.ListStoresRequest) (
 	*alicev1.ListStoresResponse, error,
 ) {
-	return nil, status.Errorf(codes.Unimplemented, "not implemented")
+	stores, err := s.stores.AccountStores.List(ctx, spanner.Key{req.Address}, maxLimit, 0)
+	if err != nil {
+		fmt.Printf("err(%T): %v\n", err, err)
+
+		return nil, status.Errorf(codes.Internal, "internal error")
+	}
+
+	resp := &alicev1.ListStoresResponse{}
+	for _, v := range stores {
+		resp.Indexes = append(resp.Indexes, v.Index)
+	}
+
+	return resp, nil
 }
 
 func (s *Service) GetStoreValue(
-	context.Context, *alicev1.GetStoreValueRequest) (
+	ctx context.Context, req *alicev1.GetStoreValueRequest) (
 	*alicev1.GetStoreValueResponse, error,
 ) {
-	return nil, status.Errorf(codes.Unimplemented, "not implemented")
+	value, err := s.stores.AccountStores.Get(ctx, spanner.Key{req.Address, req.Index})
+	if err != nil {
+		fmt.Printf("err(%T): %v\n", err, err)
+
+		return nil, status.Errorf(codes.Internal, "internal error")
+	}
+
+	resp := &alicev1.GetStoreValueResponse{
+		Value:    value.Value,
+		IssuedAt: uint32(value.IssuedAt),
+	}
+
+	return resp, nil
 }
 
 func (s *Service) ListTransactionsForAddress(
-	context.Context, *alicev1.ListTransactionsForAddressRequest) (
+	ctx context.Context, req *alicev1.ListTransactionsForAddressRequest) (
 	*alicev1.ListTransactionsForAddressResponse, error,
 ) {
-	return nil, status.Errorf(codes.Unimplemented, "not implemented")
+	limit := int64(defaultLimit)
+	if req.Limit > 0 {
+		limit = req.Limit
+	}
+
+	transactions, err := s.stores.AccountTransactions.List(ctx, spanner.Key{req.Address}, limit, req.Offset)
+	if err != nil {
+		fmt.Printf("err(%T): %v\n", err, err)
+
+		return nil, status.Errorf(codes.Internal, "internal error")
+	}
+
+	resp := &alicev1.ListTransactionsForAddressResponse{}
+
+	for _, v := range transactions {
+		resp.TransactionHashes = append(resp.TransactionHashes, v.TransactionHash)
+	}
+
+	return resp, nil
 }
 
 func (s *Service) GetBalance(
@@ -66,10 +111,93 @@ func (s *Service) GetBalance(
 }
 
 func (s *Service) GetTransaction(
-	context.Context, *alicev1.GetTransactionRequest) (
+	ctx context.Context, req *alicev1.GetTransactionRequest) (
 	*alicev1.GetTransactionResponse, error,
 ) {
-	return nil, status.Errorf(codes.Unimplemented, "not implemented")
+	resp := &alicev1.GetTransactionResponse{}
+
+	txn, err := s.stores.Transactions.Get(ctx, spanner.Key{req.Transaction})
+	if err != nil {
+		fmt.Printf("err(%T): %v\n", err, err)
+
+		return nil, status.Errorf(codes.Internal, "internal error")
+	}
+
+	resp.Transaction = &alicev1.Transaction{
+		Hash:   txn.TransactionHash,
+		Height: uint32(txn.Height),
+	}
+
+	inputs, err := s.stores.TransactionInputs.List(ctx, spanner.Key{txn.TransactionHash}, 0, 0)
+	if err != nil {
+		fmt.Printf("err(%T): %v\n", err, err)
+
+		return nil, status.Errorf(codes.Internal, "internal error")
+	}
+
+	for _, input := range inputs {
+		newInput := &alicev1.Transaction_Input{
+			TransactionHash: input.TransactionHash,
+			// ?
+			ChainId:                  uint32(input.ChainID),
+			ConsumedTransactionHash:  input.ConsumedTransactionHash,
+			ConsumedTransactionIndex: input.ConsumedTransactionIndex,
+			Signature:                input.Signature,
+		}
+		resp.Transaction.Inputs = append(resp.Transaction.Inputs, newInput)
+	}
+
+	dataStores, err := s.stores.DataStores.List(ctx, spanner.Key{txn.TransactionHash}, 0, 0)
+	if err != nil {
+		fmt.Printf("err(%T): %v\n", err, err)
+
+		return nil, status.Errorf(codes.Internal, "internal error")
+	}
+
+	for _, dataStore := range dataStores {
+		newDataStore := &alicev1.Transaction_Output{
+			UnspectTransactionOutput: &alicev1.Transaction_Output_DataStore_{
+				DataStore: &alicev1.Transaction_Output_DataStore{
+					Signature:           dataStore.Signature,
+					TransactionHash:     dataStore.TransactionHash,
+					ChainId:             uint32(dataStore.ChainID),
+					Index:               dataStore.Index,
+					IssuedAt:            uint32(dataStore.IssuedAt),
+					Deposit:             dataStore.Deposit,
+					RawData:             dataStore.RawData,
+					TransactionOutIndex: uint32(dataStore.TransactionOutIndex),
+					Owner:               dataStore.Owner,
+					Fee:                 dataStore.Fee,
+				},
+			},
+		}
+		resp.Transaction.Outputs = append(resp.Transaction.Outputs, newDataStore)
+	}
+
+	valueStores, err := s.stores.ValueStores.List(ctx, spanner.Key{txn.TransactionHash}, 0, 0)
+	if err != nil {
+		fmt.Printf("err(%T): %v\n", err, err)
+
+		return nil, status.Errorf(codes.Internal, "internal error")
+	}
+
+	for _, valueStore := range valueStores {
+		newValueStore := &alicev1.Transaction_Output{
+			UnspectTransactionOutput: &alicev1.Transaction_Output_ValueStore_{
+				ValueStore: &alicev1.Transaction_Output_ValueStore{
+					TransactionHash:     valueStore.TransactionHash,
+					ChainId:             uint32(valueStore.ChainID),
+					Value:               valueStore.Value,
+					TransactionOutIndex: uint32(valueStore.TransactionOutIndex),
+					Owner:               valueStore.Owner,
+					Fee:                 valueStore.Fee,
+				},
+			},
+		}
+		resp.Transaction.Outputs = append(resp.Transaction.Outputs, newValueStore)
+	}
+
+	return resp, nil
 }
 
 func (s *Service) ListTransactions(
@@ -81,7 +209,7 @@ func (s *Service) ListTransactions(
 		limit = req.Limit
 	}
 
-	txns, err := s.stores.Transactions.List(ctx, limit, req.Offset)
+	txns, err := s.stores.Transactions.List(ctx, nil, limit, req.Offset)
 	if err != nil {
 		fmt.Printf("err(%T): %v\n", err, err)
 
@@ -134,7 +262,7 @@ func (s *Service) ListBlocks(
 		limit = req.Limit
 	}
 
-	blocks, err := s.stores.Blocks.List(ctx, limit, req.Offset)
+	blocks, err := s.stores.Blocks.List(ctx, nil, limit, req.Offset)
 	if err != nil {
 		fmt.Printf("err(%T): %v\n", err, err)
 

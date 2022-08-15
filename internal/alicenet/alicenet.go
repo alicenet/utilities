@@ -152,18 +152,6 @@ type MinedTransactionResponse struct {
 			Signature string
 		}
 		Vout []struct {
-			AtomicSwap *struct {
-				ASPreImage struct {
-					ChainID  uint32
-					Value    string
-					TXOutIdx uint32
-					IssuedAt uint32
-					Exp      uint32
-					Owner    string
-					Fee      string
-				}
-				TxHash string
-			}
 			DataStore *struct {
 				DSLinker struct {
 					DSPreImage struct {
@@ -219,7 +207,7 @@ func (Block) Table() string {
 }
 
 // List statement for Blocks.
-func (Block) List(limit, offset int64) spanner.Statement {
+func (Block) List(_ spanner.Key, limit, offset int64) spanner.Statement {
 	stmt := spanner.NewStatement("SELECT * FROM Blocks ORDER BY Height DESC LIMIT @limit OFFSET @offset")
 	stmt.Params["limit"] = limit
 	stmt.Params["offset"] = offset
@@ -245,7 +233,7 @@ func (Transaction) Table() string {
 }
 
 // List statement for Transactions.
-func (Transaction) List(limit, offset int64) spanner.Statement {
+func (Transaction) List(_ spanner.Key, limit, offset int64) spanner.Statement {
 	stmt := spanner.NewStatement(
 		"SELECT * FROM Transactions ORDER BY Height DESC, TransactionHash DESC LIMIT @limit OFFSET @offset",
 	)
@@ -277,47 +265,12 @@ func (TransactionInput) Table() string {
 }
 
 // List statement for TransactionInputs.
-func (TransactionInput) List(limit, offset int64) spanner.Statement {
+func (TransactionInput) List(prefix spanner.Key, _, _ int64) spanner.Statement {
 	stmt := spanner.NewStatement(
-		"SELECT * FROM Transactions ORDER BY Height DESC, TransactionHash DESC LIMIT @limit OFFSET @offset",
+		"SELECT * FROM TransactionInputs WHERE TransactionHash = @transactionHash " +
+			"ORDER BY TransactionIndex DESC",
 	)
-	stmt.Params["limit"] = limit
-	stmt.Params["offset"] = offset
-
-	return stmt
-}
-
-// An AtomicSwap model to store in Spanner.
-type AtomicSwap struct {
-	TransactionHash     string
-	ChainID             int64
-	Value               string
-	TransactionOutIndex int64
-	IssuedAt            int64
-	Exp                 int64
-	Owner               string
-	Fee                 string
-	ObserveTime         time.Time
-}
-
-// Key for the AtomicSwaps.
-func (a AtomicSwap) Key() spanner.Key {
-	return spanner.Key{a.TransactionHash, a.TransactionOutIndex}
-}
-
-// Table to store AtomicSwaps.
-func (AtomicSwap) Table() string {
-	return "AtomicSwaps"
-}
-
-// List statement for AtomicSwaps.
-func (AtomicSwap) List(limit, offset int64) spanner.Statement {
-	stmt := spanner.NewStatement(
-		"SELECT * FROM TransactionAtomicSwaps " +
-			"ORDER BY TransactionHash DESC, TransactionOutIndex DESC LIMIT @limit OFFSET @offset",
-	)
-	stmt.Params["limit"] = limit
-	stmt.Params["offset"] = offset
+	stmt.Params["transactionHash"] = prefix[0]
 
 	return stmt
 }
@@ -344,13 +297,12 @@ func (ValueStore) Table() string {
 }
 
 // List statement for ValueStores.
-func (ValueStore) List(limit, offset int64) spanner.Statement {
+func (ValueStore) List(prefix spanner.Key, _, _ int64) spanner.Statement {
 	stmt := spanner.NewStatement(
-		"SELECT * FROM TransactionValueStores " +
-			"ORDER BY TransactionHash DESC, TransactionOutIndex DESC LIMIT @limit OFFSET @offset",
+		"SELECT * FROM ValueStores WHERE TransactionHash = @transactionHash " +
+			"ORDER BY TransactionOutIndex DESC",
 	)
-	stmt.Params["limit"] = limit
-	stmt.Params["offset"] = offset
+	stmt.Params["transactionHash"] = prefix[0]
 
 	return stmt
 }
@@ -381,13 +333,12 @@ func (DataStore) Table() string {
 }
 
 // List statement for DataStores.
-func (DataStore) List(limit, offset int64) spanner.Statement {
+func (DataStore) List(prefix spanner.Key, _, _ int64) spanner.Statement {
 	stmt := spanner.NewStatement(
-		"SELECT * FROM TransactionDataStores " +
-			"ORDER BY TransactionHash DESC, TransactionOutIndex DESC LIMIT @limit OFFSET @offset",
+		"SELECT * FROM DataStores WHERE TransactionHash = @transactionHash " +
+			"ORDER BY TransactionOutIndex DESC",
 	)
-	stmt.Params["limit"] = limit
-	stmt.Params["offset"] = offset
+	stmt.Params["transactionHash"] = prefix[0]
 
 	return stmt
 }
@@ -409,7 +360,7 @@ func (Account) Table() string {
 }
 
 // List statement for Accounts.
-func (Account) List(limit, offset int64) spanner.Statement {
+func (Account) List(_ spanner.Key, limit, offset int64) spanner.Statement {
 	stmt := spanner.NewStatement("SELECT * FROM Accounts ORDER BY Address LIMIT @limit OFFSET @offset")
 	stmt.Params["limit"] = limit
 	stmt.Params["offset"] = offset
@@ -435,8 +386,40 @@ func (AccountTransaction) Table() string {
 }
 
 // List statement for AccountTransactions.
-func (AccountTransaction) List(limit, offset int64) spanner.Statement {
-	stmt := spanner.NewStatement("SELECT * FROM AccountTransactions ORDER BY Address LIMIT @limit OFFSET @offset")
+func (AccountTransaction) List(prefix spanner.Key, limit, offset int64) spanner.Statement {
+	stmt := spanner.NewStatement(
+		"SELECT * FROM AccountTransactions WHERE Address = @address ORDER BY TransactionHash LIMIT @limit OFFSET @offset")
+	stmt.Params["address"] = prefix[0]
+	stmt.Params["limit"] = limit
+	stmt.Params["offset"] = offset
+
+	return stmt
+}
+
+// An AccountStore model to store in Spanner.
+type AccountStore struct {
+	Address     string
+	Index       string
+	IssuedAt    int64
+	Value       string
+	ObserveTime time.Time
+}
+
+// Key for the AccountStore.
+func (a AccountStore) Key() spanner.Key {
+	return spanner.Key{a.Address, a.Index}
+}
+
+// Table to store AccountStores.
+func (AccountStore) Table() string {
+	return "AccountStores"
+}
+
+// List statement for AccountStores.
+func (AccountStore) List(prefix spanner.Key, limit, offset int64) spanner.Statement {
+	stmt := spanner.NewStatement(
+		"SELECT * FROM AccountStores WHERE Address = @address ORDER BY Index LIMIT @limit OFFSET @offset")
+	stmt.Params["address"] = prefix[0]
 	stmt.Params["limit"] = limit
 	stmt.Params["offset"] = offset
 
@@ -448,11 +431,11 @@ type Stores struct {
 	Blocks              store.Store[Block]
 	Transactions        store.Store[Transaction]
 	TransactionInputs   store.Store[TransactionInput]
-	AtomicSwaps         store.Store[AtomicSwap]
 	DataStores          store.Store[DataStore]
 	ValueStores         store.Store[ValueStore]
 	Accounts            store.Store[Account]
 	AccountTransactions store.Store[AccountTransaction]
+	AccountStores       store.Store[AccountStore]
 }
 
 // InSpanner storage of all alicenet resources.
@@ -461,10 +444,10 @@ func InSpanner(client *spanner.Client) *Stores {
 		Blocks:              store.InSpanner[Block](client),
 		Transactions:        store.InSpanner[Transaction](client),
 		TransactionInputs:   store.InSpanner[TransactionInput](client),
-		AtomicSwaps:         store.InSpanner[AtomicSwap](client),
 		DataStores:          store.InSpanner[DataStore](client),
 		ValueStores:         store.InSpanner[ValueStore](client),
 		Accounts:            store.InSpanner[Account](client),
 		AccountTransactions: store.InSpanner[AccountTransaction](client),
+		AccountStores:       store.InSpanner[AccountStore](client),
 	}
 }

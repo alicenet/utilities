@@ -72,7 +72,7 @@
         "tags": ["AliceService"]
       }
     },
-    "/v1/addresses/{address}/stores/{dataStore}/indexes/{index}": {
+    "/v1/addresses/{address}/stores/{index}": {
       "get": {
         "summary": "GetStoreValue for a given address, data store and index.",
         "operationId": "AliceService_GetStoreValue",
@@ -94,13 +94,6 @@
           {
             "name": "address",
             "description": "The address to get the stored value for.",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataStore",
-            "description": "The data_store to pull the value from.",
             "in": "path",
             "required": true,
             "type": "string"
@@ -303,48 +296,6 @@
     }
   },
   "definitions": {
-    "OutputAtomicSwap": {
-      "type": "object",
-      "properties": {
-        "transactionHash": {
-          "type": "string",
-          "description": "The hash of the transaction."
-        },
-        "chainId": {
-          "type": "integer",
-          "format": "int64",
-          "description": "The ID of the chain containing this transaction."
-        },
-        "value": {
-          "type": "string",
-          "description": "The value of the swap."
-        },
-        "transactionOutIndex": {
-          "type": "integer",
-          "format": "int64",
-          "description": "The index of the output transaction."
-        },
-        "issuedAt": {
-          "type": "integer",
-          "format": "int64",
-          "description": "When this swap was issued at."
-        },
-        "exp": {
-          "type": "integer",
-          "format": "int64",
-          "title": "Exp?"
-        },
-        "owner": {
-          "type": "string",
-          "description": "The owner of the swap."
-        },
-        "fee": {
-          "type": "string",
-          "description": "The fee paid for this swap."
-        }
-      },
-      "description": "An AtomicSwap on the AliceNet chain."
-    },
     "OutputDataStore": {
       "type": "object",
       "properties": {
@@ -438,6 +389,11 @@
           "type": "string",
           "description": "The hash of this transaction."
         },
+        "transactionIndex": {
+          "type": "string",
+          "format": "int64",
+          "description": "The index of this transaction."
+        },
         "consumedTransactionHash": {
           "type": "string",
           "description": "The hash of the consumed transaction."
@@ -457,10 +413,6 @@
     "TransactionOutput": {
       "type": "object",
       "properties": {
-        "atomicSwap": {
-          "$ref": "#/definitions/OutputAtomicSwap",
-          "description": "An atomic swap."
-        },
         "valueStore": {
           "$ref": "#/definitions/OutputValueStore",
           "description": "A value store."
@@ -572,7 +524,12 @@
       "properties": {
         "value": {
           "type": "string",
-          "description": "The value stored for a given address/data store/index."
+          "description": "The value stored for a given address/index."
+        },
+        "issuedAt": {
+          "type": "integer",
+          "format": "int64",
+          "description": "When this data store was issued at."
         }
       },
       "description": "GetStoreValueResponse from the service."
@@ -603,6 +560,15 @@
     },
     "v1ListStoresResponse": {
       "type": "object",
+      "properties": {
+        "indexes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of indexes stored for the given address."
+        }
+      },
       "description": "ListStoresResponse from the service."
     },
     "v1ListTransactionsForAddressResponse": {
@@ -651,6 +617,11 @@
             "$ref": "#/definitions/TransactionOutput"
           },
           "description": "The outputs from this transaction."
+        },
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The block containing the transaction."
         }
       },
       "description": "A Transaction on the AliceNet chain."

@@ -16,7 +16,7 @@ service AliceService {
   // GetStoreValue for a given address, data store and index.
   rpc GetStoreValue(GetStoreValueRequest) returns (GetStoreValueResponse) {
     option (google.api.http) = {
-      get: "/v1/addresses/{address}/stores/{data_store}/indexes/{index}"
+      get: "/v1/addresses/{address}/stores/{index}"
     };
   }
 
@@ -71,23 +71,24 @@ message ListStoresRequest {
 
 // ListStoresResponse from the service.
 message ListStoresResponse {
-  // Working on the data types here.
+  // A list of indexes stored for the given address.
+  repeated string indexes = 1;
 }
 
 // GetStoreValueRequest to call the service.
 message GetStoreValueRequest {
   // The address to get the stored value for.
   string address = 1;
-  // The data_store to pull the value from.
-  string data_store = 2;
   // The index in the data_store to pull the value from.
-  string index = 3;
+  string index = 2;
 }
 
 // GetStoreValueResponse from the service.
 message GetStoreValueResponse {
-  // The value stored for a given address/data store/index.
+  // The value stored for a given address/index.
   string value = 1;
+  // When this data store was issued at.
+  uint32 issued_at = 2;
 }
 
 // ListTransactionsForAddressRequest to call the service.
@@ -199,36 +200,18 @@ message Transaction {
     uint32 chain_id = 1;
     // The hash of this transaction.
     string transaction_hash = 2;
+    // The index of this transaction.
+    int64 transaction_index = 3;
     // The hash of the consumed transaction.
-    string consumed_transaction_hash = 3;
+    string consumed_transaction_hash = 4;
     // The index of the consumed transaction.
-    int64 consumed_transaction_index = 4;
+    int64 consumed_transaction_index = 5;
     // A signature of the input.
-    string signature = 5;
+    string signature = 6;
   }
 
   // Output from the transaction.
   message Output {
-    // An AtomicSwap on the AliceNet chain.
-    message AtomicSwap {
-      // The hash of the transaction.
-      string transaction_hash = 1;
-      // The ID of the chain containing this transaction.
-      uint32 chain_id = 2;
-      // The value of the swap.
-      string value = 3;
-      // The index of the output transaction.
-      uint32 transaction_out_index = 4;
-      // When this swap was issued at.
-      uint32 issued_at = 5;
-      // Exp?
-      uint32 exp = 6;
-      // The owner of the swap.
-      string owner = 7;
-      // The fee paid for this swap.
-      string fee = 8;
-    }
-
     // A ValueStore on the AliceNet chain.
     message ValueStore {
       // The hash of the transaction.
@@ -271,8 +254,6 @@ message Transaction {
 
     // Unspect transaction outputs can be one of several types.
     oneof unspect_transaction_output {
-      // An atomic swap.
-      AtomicSwap atomic_swap = 1;
       // A value store.
       ValueStore value_store = 2;
       // A data store.
@@ -286,4 +267,6 @@ message Transaction {
   repeated Input inputs = 2;
   // The outputs from this transaction.
   repeated Output outputs = 3;
+  // The block containing the transaction.
+  uint32 height = 4;
 }
