@@ -17,19 +17,24 @@ import (
 
 	alicev1 "github.com/alicenet/indexer/api/alice/v1"
 	"github.com/alicenet/indexer/internal/alicenet"
+	"github.com/alicenet/indexer/internal/flagz"
 	"github.com/alicenet/indexer/internal/handler"
 	"github.com/alicenet/indexer/internal/service"
 	"github.com/alicenet/indexer/internal/service/frontend"
 )
 
 const (
-	addr         = ":8080"
+	defaultPort  = 8080
 	httpTimeouts = 10 * time.Second
 )
 
 func main() {
+	port := flag.Uint64("port", defaultPort, "port to listen on")
 	database := flag.String("database", "projects/mn-test-298216/instances/alicenet/databases/indexer", "spanner database")
-	flag.Parse()
+
+	flagz.Parse()
+
+	addr := fmt.Sprintf(":%d", *port)
 
 	fmt.Println("running frontend")
 

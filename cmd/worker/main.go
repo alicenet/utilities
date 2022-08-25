@@ -12,13 +12,15 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/spanner"
 
 	"github.com/alicenet/indexer/internal/alicenet"
+	"github.com/alicenet/indexer/internal/flagz"
 	"github.com/alicenet/indexer/internal/service/worker"
 )
 
 func main() {
 	api := flag.String("api", "edge.staging.alice.net", "api hosting alicenet")
 	database := flag.String("database", "projects/mn-test-298216/instances/alicenet/databases/indexer", "spanner database")
-	flag.Parse()
+
+	flagz.Parse()
 
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
