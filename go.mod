@@ -12,7 +12,7 @@ require (
 	go.opencensus.io v0.23.0
 	golang.org/x/net v0.0.0-20220726230323-06994584191e
 	golang.org/x/tools v0.1.12
-	google.golang.org/api v0.93.0
+	google.golang.org/api v0.94.0
 	google.golang.org/genproto v0.0.0-20220822174746-9e6da59bd2fc
 	google.golang.org/grpc v1.48.0
 	google.golang.org/protobuf v1.28.1
