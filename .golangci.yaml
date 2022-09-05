@@ -70,7 +70,6 @@ linters:
     - unparam
     - unused
     - varcheck
-    - varnamelen
     - wastedassign
     - whitespace
     - wsl

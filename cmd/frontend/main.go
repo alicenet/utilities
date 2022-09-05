@@ -62,7 +62,7 @@ func main() {
 
 	httpServer := http.Server{
 		Addr:              addr,
-		Handler:           handler.GRPC(grpcServer, mux),
+		Handler:           handler.CORS(handler.GRPC(grpcServer, mux)),
 		ReadTimeout:       httpTimeouts,
 		ReadHeaderTimeout: httpTimeouts,
 	}
