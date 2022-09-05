@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -77,6 +78,8 @@ func main() {
 	}()
 
 	if err := httpServer.ListenAndServe(); err != nil {
-		panic(err)
+		if !errors.Is(err, http.ErrServerClosed) {
+			panic(err)
+		}
 	}
 }
