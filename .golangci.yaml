@@ -8,7 +8,6 @@ linters:
     - containedctx
     - contextcheck
     # - cyclop # Some stuff to work out
-    - deadcode
     - decorder
     - dogsled
     - dupl
@@ -69,7 +68,6 @@ linters:
     - unconvert
     - unparam
     - unused
-    - varcheck
     - wastedassign
     - whitespace
     - wsl
