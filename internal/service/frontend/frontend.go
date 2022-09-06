@@ -7,6 +7,7 @@ import (
 	"cloud.google.com/go/spanner"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	alicev1 "github.com/alicenet/indexer/api/alice/v1"
 	"github.com/alicenet/indexer/internal/alicenet"
@@ -124,8 +125,9 @@ func (s *Service) GetTransaction(
 	}
 
 	resp.Transaction = &alicev1.Transaction{
-		Hash:   txn.TransactionHash,
-		Height: uint32(txn.Height),
+		Hash:        txn.TransactionHash,
+		Height:      uint32(txn.Height),
+		ObserveTime: timestamppb.New(txn.ObserveTime),
 	}
 
 	inputs, err := s.stores.TransactionInputs.List(ctx, spanner.Key{txn.TransactionHash}, 0, 0)
@@ -247,6 +249,7 @@ func (s *Service) GetBlock(
 			HeaderRootHash:      block.HeaderRootHash,
 			GroupSignatureHash:  block.GroupSignatureHash,
 			TransactionHashes:   block.TransactionHashes,
+			ObserveTime:         timestamppb.New(block.ObserveTime),
 		},
 	}
 
