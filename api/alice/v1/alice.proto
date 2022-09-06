@@ -3,6 +3,7 @@ syntax = "proto3";
 package api.alice.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 // AliceService provides insight into the AliceNet chain without needing to directly contact a validator node.
 service AliceService {
@@ -190,6 +191,8 @@ message Block {
   string group_signature_hash = 8;
   // A list of transaction hashes contained in this block.
   repeated string transaction_hashes = 9;
+  // The observed time of this block. It is when it was indexed, not when it happened.
+  google.protobuf.Timestamp observe_time = 10;
 }
 
 // A Transaction on the AliceNet chain.
@@ -269,4 +272,6 @@ message Transaction {
   repeated Output outputs = 3;
   // The block containing the transaction.
   uint32 height = 4;
+  // The observed time of this transaction. It is when it was indexed, not when it happened.
+  google.protobuf.Timestamp observe_time = 5;
 }
