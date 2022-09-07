@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"cloud.google.com/go/spanner"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -17,6 +18,47 @@ const (
 	defaultLimit = 100
 	maxLimit     = 1024
 )
+
+// A validator will return an error for any misconfigured fields.
+type validator interface {
+	ValidateAll() error
+}
+
+// A fieldError for any invalid arguments found in validation.
+type fieldError interface {
+	Field() string
+	Reason() string
+}
+
+// validate an input and return an error with details suitable to be returned by a GRPC method.
+func validate[ME ~[]error, E fieldError](val validator) error {
+	err := val.ValidateAll()
+	if err == nil {
+		return nil
+	}
+
+	st := status.New(codes.InvalidArgument, "invalid request")
+	br := &errdetails.BadRequest{}
+
+	//nolint: errorlint,forcetypeassert // Annoying casting of errors needed here as we always know the underlying type.
+	errs := err.(ME)
+	for _, e := range errs {
+		//nolint: errorlint,forcetypeassert // Annoying casting of errors needed here as we always know the underlying type.
+		err := e.(E)
+		v := &errdetails.BadRequest_FieldViolation{
+			Field:       err.Field(),
+			Description: err.Reason(),
+		}
+		br.FieldViolations = append(br.FieldViolations, v)
+	}
+
+	st, err = st.WithDetails(br)
+	if err != nil {
+		panic(err)
+	}
+
+	return st.Err()
+}
 
 type Service struct {
 	stores *alicenet.Stores
@@ -32,6 +74,10 @@ func (s *Service) ListStores(
 	ctx context.Context, req *alicev1.ListStoresRequest) (
 	*alicev1.ListStoresResponse, error,
 ) {
+	if err := validate[alicev1.ListStoresRequestMultiError, alicev1.ListStoresRequestValidationError](req); err != nil {
+		return nil, err
+	}
+
 	stores, err := s.stores.AccountStores.List(ctx, spanner.Key{req.Address}, maxLimit, 0)
 	if err != nil {
 		fmt.Printf("err(%T): %v\n", err, err)
@@ -51,6 +97,12 @@ func (s *Service) GetStoreValue(
 	ctx context.Context, req *alicev1.GetStoreValueRequest) (
 	*alicev1.GetStoreValueResponse, error,
 ) {
+	if err := validate[
+		alicev1.GetStoreValueRequestMultiError, alicev1.GetStoreValueRequestValidationError,
+	](req); err != nil {
+		return nil, err
+	}
+
 	value, err := s.stores.AccountStores.Get(ctx, spanner.Key{req.Address, req.Index})
 	if err != nil {
 		fmt.Printf("err(%T): %v\n", err, err)
@@ -70,6 +122,13 @@ func (s *Service) ListTransactionsForAddress(
 	ctx context.Context, req *alicev1.ListTransactionsForAddressRequest) (
 	*alicev1.ListTransactionsForAddressResponse, error,
 ) {
+	if err := validate[
+		alicev1.ListTransactionsForAddressRequestMultiError,
+		alicev1.ListTransactionsForAddressRequestValidationError,
+	](req); err != nil {
+		return nil, err
+	}
+
 	limit := int64(defaultLimit)
 	if req.Limit > 0 {
 		limit = req.Limit
@@ -95,6 +154,13 @@ func (s *Service) GetBalance(
 	ctx context.Context, req *alicev1.GetBalanceRequest) (
 	*alicev1.GetBalanceResponse, error,
 ) {
+	if err := validate[
+		alicev1.GetBalanceRequestMultiError,
+		alicev1.GetBalanceRequestValidationError,
+	](req); err != nil {
+		return nil, err
+	}
+
 	account, err := s.stores.Accounts.Get(ctx, spanner.Key{req.Address})
 	if err != nil {
 		fmt.Printf("err(%T): %v\n", err, err)
@@ -115,6 +181,13 @@ func (s *Service) GetTransaction(
 	ctx context.Context, req *alicev1.GetTransactionRequest) (
 	*alicev1.GetTransactionResponse, error,
 ) {
+	if err := validate[
+		alicev1.GetTransactionRequestMultiError,
+		alicev1.GetTransactionRequestValidationError,
+	](req); err != nil {
+		return nil, err
+	}
+
 	resp := &alicev1.GetTransactionResponse{}
 
 	txn, err := s.stores.Transactions.Get(ctx, spanner.Key{req.Transaction})
@@ -206,6 +279,13 @@ func (s *Service) ListTransactions(
 	ctx context.Context, req *alicev1.ListTransactionsRequest) (
 	*alicev1.ListTransactionsResponse, error,
 ) {
+	if err := validate[
+		alicev1.ListTransactionsRequestMultiError,
+		alicev1.ListTransactionsRequestValidationError,
+	](req); err != nil {
+		return nil, err
+	}
+
 	limit := int64(defaultLimit)
 	if req.Limit > 0 {
 		limit = req.Limit
@@ -231,6 +311,10 @@ func (s *Service) GetBlock(
 	ctx context.Context, req *alicev1.GetBlockRequest) (
 	*alicev1.GetBlockResponse, error,
 ) {
+	if err := validate[alicev1.GetBlockRequestMultiError, alicev1.GetBlockRequestValidationError](req); err != nil {
+		return nil, err
+	}
+
 	block, err := s.stores.Blocks.Get(ctx, spanner.Key{int64(req.Height)})
 	if err != nil {
 		fmt.Printf("err(%T): %v\n", err, err)
@@ -260,6 +344,13 @@ func (s *Service) ListBlocks(
 	ctx context.Context, req *alicev1.ListBlocksRequest) (
 	*alicev1.ListBlocksResponse, error,
 ) {
+	if err := validate[
+		alicev1.ListBlocksRequestMultiError,
+		alicev1.ListBlocksRequestValidationError,
+	](req); err != nil {
+		return nil, err
+	}
+
 	limit := int64(defaultLimit)
 	if req.Limit > 0 {
 		limit = req.Limit

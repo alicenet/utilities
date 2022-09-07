@@ -5,6 +5,7 @@ managed:
     default: github.com/alicenet/indexer/api
     except:
       - buf.build/googleapis/googleapis
+      - buf.build/envoyproxy/protoc-gen-validate
 plugins:
   - remote: buf.build/library/plugins/go:v1.27.1-1
     out: .
@@ -23,3 +24,11 @@ plugins:
     out: .
     opt:
       - logtostderr=true
+  # Following is in place until official plugin is in place.
+  # Ownership of the project is transferring to buf team so this is likely:
+  # https://github.com/envoyproxy/protoc-gen-validate/issues/616
+  - remote: buf.build/jirkad/plugins/protoc-gen-validate:v0.6.7
+    out: .
+    opt:
+      - paths=source_relative
+      - lang=go
