@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: AliceNet Main Repository
+    url: https://github.com/alicenet/alicenet
+    about: For any issues with the AliceNet nodes themselves, please see the main repository.
