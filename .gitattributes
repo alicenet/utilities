@@ -8,8 +8,8 @@
 # Simplify how generated files work with git/github
 *.pb.go           -diff -merge
 *.pb.go           linguist-generated=true
-*.pb.gw.go        -diff -merge
-*.pb.gw.go        linguist-generated=true
+*.pb.*.go         -diff -merge
+*.pb.*.go         linguist-generated=true
 *.swagger.json    -diff -merge
 *.swagger.json    linguist-generated=true
 *.mockgen.go      -diff -merge
