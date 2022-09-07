@@ -220,6 +220,7 @@ type Transaction struct {
 	Height          int64
 	TransactionHash string
 	ObserveTime     time.Time
+	Missing         *bool
 }
 
 // Key for the Transaction.
