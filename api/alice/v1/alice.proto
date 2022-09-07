@@ -4,6 +4,7 @@ package api.alice.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
 
 // AliceService provides insight into the AliceNet chain without needing to directly contact a validator node.
 service AliceService {
@@ -67,7 +68,7 @@ service AliceService {
 // ListStoresRequest to call the service.
 message ListStoresRequest {
   // The address to list the stores for.
-  string address = 1;
+  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{64}$"];
 }
 
 // ListStoresResponse from the service.
@@ -79,9 +80,9 @@ message ListStoresResponse {
 // GetStoreValueRequest to call the service.
 message GetStoreValueRequest {
   // The address to get the stored value for.
-  string address = 1;
+  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{64}$"];
   // The index in the data_store to pull the value from.
-  string index = 2;
+  string index = 2 [(validate.rules).string.pattern = "^[0-9a-fA-F]+$"];
 }
 
 // GetStoreValueResponse from the service.
@@ -95,11 +96,14 @@ message GetStoreValueResponse {
 // ListTransactionsForAddressRequest to call the service.
 message ListTransactionsForAddressRequest {
   // The address to list the transactions for.
-  string address = 1;
+  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{64}$"];
   // The pagination limit in the List request.
-  int64 limit = 2;
+  int64 limit = 2 [(validate.rules).int64 = {
+    gte: 0,
+    lte: 1000
+  }];
   // The pagination offset in the List request.
-  int64 offset = 3;
+  int64 offset = 3 [(validate.rules).int64.gte = 0];
 }
 // ListTransactionsForAddressResponse from the service.
 message ListTransactionsForAddressResponse {
@@ -110,7 +114,7 @@ message ListTransactionsForAddressResponse {
 // GetBalanceRequest to call the service.
 message GetBalanceRequest {
   // The address to get the balance for.
-  string address = 1;
+  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{64}$"];
 }
 
 // GetBalanceResponse from the service.
@@ -122,7 +126,7 @@ message GetBalanceResponse {
 // GetTransactionRequest to call the service.
 message GetTransactionRequest {
   // The transaction hash to request.
-  string transaction = 1;
+  string transaction = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{64}$"];
 }
 
 // GetTransactionResponse from the service.
@@ -134,7 +138,9 @@ message GetTransactionResponse {
 // GetBlockRequest to call the service.
 message GetBlockRequest {
   // The height of the block to request.
-  uint32 height = 1;
+  uint32 height = 1 [(validate.rules).uint32 = {
+    gt: 0
+  }];
 }
 
 // GetBlockResponse from the service.
@@ -146,9 +152,12 @@ message GetBlockResponse {
 // ListBlocksRequest to call the service.
 message ListBlocksRequest {
   // The pagination limit in the List request.
-  int64 limit = 1;
+  int64 limit = 1 [(validate.rules).int64 = {
+    gte: 0,
+    lte: 1000
+  }];
   // The pagination offset in the List request.
-  int64 offset = 2;
+  int64 offset = 2 [(validate.rules).int64.gte = 0];
 }
 
 // ListBlocksResponse from the service.
@@ -160,9 +169,12 @@ message ListBlocksResponse {
 // ListTransactionsRequest to call the service.
 message ListTransactionsRequest {
   // The pagination limit in the List request.
-  int64 limit = 1;
+  int64 limit = 1 [(validate.rules).int64 = {
+    gte: 0,
+    lte: 1000
+  }];
   // The pagination offset in the List request.
-  int64 offset = 2;
+  int64 offset = 2 [(validate.rules).int64.gte = 0];
 }
 
 // ListTransactionsResponse from the service.
