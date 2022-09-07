@@ -197,6 +197,26 @@ func (s *Service) GetTransaction(
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
 
+	if txn.Missing != nil && *txn.Missing {
+		st := status.New(codes.FailedPrecondition, "transaction not indexed")
+		pf := &errdetails.PreconditionFailure{
+			Violations: []*errdetails.PreconditionFailure_Violation{
+				{
+					Type:        "MissingTransaction",
+					Subject:     txn.TransactionHash,
+					Description: "The transaction has expired and been purged from the database before it could be indexed.",
+				},
+			},
+		}
+
+		st, err := st.WithDetails(pf)
+		if err != nil {
+			panic(err)
+		}
+
+		return nil, st.Err()
+	}
+
 	resp.Transaction = &alicev1.Transaction{
 		Hash:        txn.TransactionHash,
 		Height:      uint32(txn.Height),

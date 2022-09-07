@@ -3,6 +3,7 @@ package worker
 import (
 	"context"
 	"fmt"
+	"log"
 	"math/big"
 	"time"
 
@@ -79,7 +80,14 @@ func (s *Service) process(ctx context.Context) error {
 		for _, hash := range blockHeader.TxHshLst {
 			txn, err := s.client.Transaction(ctx, hash)
 			if err != nil {
-				return fmt.Errorf("processing: %w", err)
+				// Transaction has likely been purged from the chain. Mark it as missing and continue.
+				log.Printf("transaction %s missing, continuing\n", hash)
+
+				if err := s.pushMissingTransaction(ctx, height, hash); err != nil {
+					return err
+				}
+
+				continue
 			}
 
 			if err := s.pushTransaction(ctx, height, hash, txn); err != nil {
@@ -136,6 +144,7 @@ func (s *Service) pushTransaction(
 	newTx := alicenet.Transaction{
 		Height:          int64(height),
 		TransactionHash: hash,
+		ObserveTime:     spanner.CommitTimestamp,
 	}
 
 	if err := s.stores.Transactions.Insert(ctx, newTx); err != nil {
@@ -147,6 +156,30 @@ func (s *Service) pushTransaction(
 	}
 
 	if err := s.pushTransactionOutput(ctx, txn); err != nil {
+		return fmt.Errorf("pushing transaction: %w", err)
+	}
+
+	return nil
+}
+
+// pushTransaction to the permanent stores.
+func (s *Service) pushMissingTransaction(
+	ctx context.Context,
+	height int,
+	hash string,
+) error {
+	fmt.Printf("writing missing transaction: %+v\n", hash)
+
+	missing := true
+
+	newTx := alicenet.Transaction{
+		Height:          int64(height),
+		TransactionHash: hash,
+		ObserveTime:     spanner.CommitTimestamp,
+		Missing:         &missing,
+	}
+
+	if err := s.stores.Transactions.Insert(ctx, newTx); err != nil {
 		return fmt.Errorf("pushing transaction: %w", err)
 	}
 
