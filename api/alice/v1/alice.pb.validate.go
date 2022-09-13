@@ -60,7 +60,7 @@ func (m *ListStoresRequest) validate(all bool) error {
 	if !_ListStoresRequest_Address_Pattern.MatchString(m.GetAddress()) {
 		err := ListStoresRequestValidationError{
 			field:  "Address",
-			reason: "value does not match regex pattern \"^[0-9a-fA-F]{64}$\"",
+			reason: "value does not match regex pattern \"^[0-9a-fA-F]{44}$\"",
 		}
 		if !all {
 			return err
@@ -148,7 +148,7 @@ var _ interface {
 	ErrorName() string
 } = ListStoresRequestValidationError{}
 
-var _ListStoresRequest_Address_Pattern = regexp.MustCompile("^[0-9a-fA-F]{64}$")
+var _ListStoresRequest_Address_Pattern = regexp.MustCompile("^[0-9a-fA-F]{44}$")
 
 // Validate checks the field values on ListStoresResponse with the rules
 // defined in the proto definition for this message. If any rules are
@@ -277,7 +277,7 @@ func (m *GetStoreValueRequest) validate(all bool) error {
 	if !_GetStoreValueRequest_Address_Pattern.MatchString(m.GetAddress()) {
 		err := GetStoreValueRequestValidationError{
 			field:  "Address",
-			reason: "value does not match regex pattern \"^[0-9a-fA-F]{64}$\"",
+			reason: "value does not match regex pattern \"^[0-9a-fA-F]{44}$\"",
 		}
 		if !all {
 			return err
@@ -376,7 +376,7 @@ var _ interface {
 	ErrorName() string
 } = GetStoreValueRequestValidationError{}
 
-var _GetStoreValueRequest_Address_Pattern = regexp.MustCompile("^[0-9a-fA-F]{64}$")
+var _GetStoreValueRequest_Address_Pattern = regexp.MustCompile("^[0-9a-fA-F]{44}$")
 
 var _GetStoreValueRequest_Index_Pattern = regexp.MustCompile("^[0-9a-fA-F]+$")
 
@@ -512,7 +512,7 @@ func (m *ListTransactionsForAddressRequest) validate(all bool) error {
 	if !_ListTransactionsForAddressRequest_Address_Pattern.MatchString(m.GetAddress()) {
 		err := ListTransactionsForAddressRequestValidationError{
 			field:  "Address",
-			reason: "value does not match regex pattern \"^[0-9a-fA-F]{64}$\"",
+			reason: "value does not match regex pattern \"^[0-9a-fA-F]{44}$\"",
 		}
 		if !all {
 			return err
@@ -624,7 +624,7 @@ var _ interface {
 	ErrorName() string
 } = ListTransactionsForAddressRequestValidationError{}
 
-var _ListTransactionsForAddressRequest_Address_Pattern = regexp.MustCompile("^[0-9a-fA-F]{64}$")
+var _ListTransactionsForAddressRequest_Address_Pattern = regexp.MustCompile("^[0-9a-fA-F]{44}$")
 
 // Validate checks the field values on ListTransactionsForAddressResponse with
 // the rules defined in the proto definition for this message. If any rules
@@ -756,7 +756,7 @@ func (m *GetBalanceRequest) validate(all bool) error {
 	if !_GetBalanceRequest_Address_Pattern.MatchString(m.GetAddress()) {
 		err := GetBalanceRequestValidationError{
 			field:  "Address",
-			reason: "value does not match regex pattern \"^[0-9a-fA-F]{64}$\"",
+			reason: "value does not match regex pattern \"^[0-9a-fA-F]{44}$\"",
 		}
 		if !all {
 			return err
@@ -844,7 +844,7 @@ var _ interface {
 	ErrorName() string
 } = GetBalanceRequestValidationError{}
 
-var _GetBalanceRequest_Address_Pattern = regexp.MustCompile("^[0-9a-fA-F]{64}$")
+var _GetBalanceRequest_Address_Pattern = regexp.MustCompile("^[0-9a-fA-F]{44}$")
 
 // Validate checks the field values on GetBalanceResponse with the rules
 // defined in the proto definition for this message. If any rules are

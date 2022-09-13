@@ -9,8 +9,12 @@
       "name": "AliceService"
     }
   ],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/v1/addresses/{address}/balance": {
       "get": {
@@ -39,7 +43,9 @@
             "type": "string"
           }
         ],
-        "tags": ["AliceService"]
+        "tags": [
+          "AliceService"
+        ]
       }
     },
     "/v1/addresses/{address}/stores": {
@@ -69,7 +75,9 @@
             "type": "string"
           }
         ],
-        "tags": ["AliceService"]
+        "tags": [
+          "AliceService"
+        ]
       }
     },
     "/v1/addresses/{address}/stores/{index}": {
@@ -106,7 +114,9 @@
             "type": "string"
           }
         ],
-        "tags": ["AliceService"]
+        "tags": [
+          "AliceService"
+        ]
       }
     },
     "/v1/addresses/{address}/transactions": {
@@ -152,7 +162,9 @@
             "format": "int64"
           }
         ],
-        "tags": ["AliceService"]
+        "tags": [
+          "AliceService"
+        ]
       }
     },
     "/v1/blocks": {
@@ -191,7 +203,9 @@
             "format": "int64"
           }
         ],
-        "tags": ["AliceService"]
+        "tags": [
+          "AliceService"
+        ]
       }
     },
     "/v1/blocks/{height}": {
@@ -222,7 +236,9 @@
             "format": "int64"
           }
         ],
-        "tags": ["AliceService"]
+        "tags": [
+          "AliceService"
+        ]
       }
     },
     "/v1/transactions": {
@@ -261,7 +277,9 @@
             "format": "int64"
           }
         ],
-        "tags": ["AliceService"]
+        "tags": [
+          "AliceService"
+        ]
       }
     },
     "/v1/transactions/{transaction}": {
@@ -291,7 +309,9 @@
             "type": "string"
           }
         ],
-        "tags": ["AliceService"]
+        "tags": [
+          "AliceService"
+        ]
       }
     }
   },
