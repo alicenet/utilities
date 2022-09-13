@@ -17,7 +17,7 @@ test:
 lint:
 	golangci-lint run
 	buf lint
-	# buf breaking --against '.git#branch=main' # Not implemented yet
+	buf breaking --against '.git#branch=main'
 
 .PHONY: format
 format:
