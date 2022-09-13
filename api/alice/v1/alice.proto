@@ -68,7 +68,7 @@ service AliceService {
 // ListStoresRequest to call the service.
 message ListStoresRequest {
   // The address to list the stores for.
-  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{64}$"];
+  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{44}$"];
 }
 
 // ListStoresResponse from the service.
@@ -80,7 +80,7 @@ message ListStoresResponse {
 // GetStoreValueRequest to call the service.
 message GetStoreValueRequest {
   // The address to get the stored value for.
-  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{64}$"];
+  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{44}$"];
   // The index in the data_store to pull the value from.
   string index = 2 [(validate.rules).string.pattern = "^[0-9a-fA-F]+$"];
 }
@@ -96,7 +96,7 @@ message GetStoreValueResponse {
 // ListTransactionsForAddressRequest to call the service.
 message ListTransactionsForAddressRequest {
   // The address to list the transactions for.
-  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{64}$"];
+  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{44}$"];
   // The pagination limit in the List request.
   int64 limit = 2 [(validate.rules).int64 = {
     gte: 0,
@@ -114,7 +114,7 @@ message ListTransactionsForAddressResponse {
 // GetBalanceRequest to call the service.
 message GetBalanceRequest {
   // The address to get the balance for.
-  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{64}$"];
+  string address = 1 [(validate.rules).string.pattern = "^[0-9a-fA-F]{44}$"];
 }
 
 // GetBalanceResponse from the service.
