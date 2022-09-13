@@ -2,7 +2,6 @@ package frontend
 
 import (
 	"context"
-	"fmt"
 
 	"cloud.google.com/go/spanner"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -12,6 +11,7 @@ import (
 
 	alicev1 "github.com/alicenet/indexer/api/alice/v1"
 	"github.com/alicenet/indexer/internal/alicenet"
+	"github.com/alicenet/indexer/internal/logz"
 )
 
 const (
@@ -80,7 +80,7 @@ func (s *Service) ListStores(
 
 	stores, err := s.stores.AccountStores.List(ctx, spanner.Key{req.Address}, maxLimit, 0)
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting AccountStore: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
@@ -105,7 +105,7 @@ func (s *Service) GetStoreValue(
 
 	value, err := s.stores.AccountStores.Get(ctx, spanner.Key{req.Address, req.Index})
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting AccountStore: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
@@ -136,7 +136,7 @@ func (s *Service) ListTransactionsForAddress(
 
 	transactions, err := s.stores.AccountTransactions.List(ctx, spanner.Key{req.Address}, limit, req.Offset)
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting AccountTransaction: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
@@ -163,7 +163,7 @@ func (s *Service) GetBalance(
 
 	account, err := s.stores.Accounts.Get(ctx, spanner.Key{req.Address})
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Infof("getting Account: %v", err)
 
 		account = alicenet.Account{
 			Balance: "0",
@@ -192,7 +192,7 @@ func (s *Service) GetTransaction(
 
 	txn, err := s.stores.Transactions.Get(ctx, spanner.Key{req.Transaction})
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting Transaction: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
@@ -225,7 +225,7 @@ func (s *Service) GetTransaction(
 
 	inputs, err := s.stores.TransactionInputs.List(ctx, spanner.Key{txn.TransactionHash}, 0, 0)
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting TransactionInput: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
@@ -244,7 +244,7 @@ func (s *Service) GetTransaction(
 
 	dataStores, err := s.stores.DataStores.List(ctx, spanner.Key{txn.TransactionHash}, 0, 0)
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting DataStore: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
@@ -271,7 +271,7 @@ func (s *Service) GetTransaction(
 
 	valueStores, err := s.stores.ValueStores.List(ctx, spanner.Key{txn.TransactionHash}, 0, 0)
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting ValueStore: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
@@ -313,7 +313,7 @@ func (s *Service) ListTransactions(
 
 	txns, err := s.stores.Transactions.List(ctx, nil, limit, req.Offset)
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting Transaction: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
@@ -337,7 +337,7 @@ func (s *Service) GetBlock(
 
 	block, err := s.stores.Blocks.Get(ctx, spanner.Key{int64(req.Height)})
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting Block: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}
@@ -378,7 +378,7 @@ func (s *Service) ListBlocks(
 
 	blocks, err := s.stores.Blocks.List(ctx, nil, limit, req.Offset)
 	if err != nil {
-		fmt.Printf("err(%T): %v\n", err, err)
+		logz.WithDetail("err", err).Errorf("getting Block: %v", err)
 
 		return nil, status.Errorf(codes.Internal, "internal error")
 	}

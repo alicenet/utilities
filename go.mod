@@ -11,6 +11,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
 	go.opencensus.io v0.23.0
+	golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561
 	golang.org/x/net v0.0.0-20220726230323-06994584191e
 	golang.org/x/tools v0.1.12
 	google.golang.org/api v0.94.0

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/alicenet/indexer/internal/logz"
 )
 
 const (
@@ -48,6 +50,10 @@ func parseFlagSet(flagset *flag.FlagSet, args []string) error {
 			return
 		}
 		err = apply(flagset, f.Name)
+
+		logz.WithDetails(logz.Details{
+			"flag": f,
+		}).Debug("processing flag")
 	})
 
 	if err != nil {
@@ -64,6 +70,8 @@ func apply(fs *flag.FlagSet, name string) error {
 		if err := fs.Set(name, v); err != nil {
 			return fmt.Errorf("set %s to %s: %w", name, v, err)
 		}
+
+		logz.WithDetails(logz.Details{"name": name, "value": v}).Debug("got environment override for flag")
 	}
 
 	return nil

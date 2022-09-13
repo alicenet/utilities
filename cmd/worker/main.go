@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,10 +12,13 @@ import (
 
 	"github.com/alicenet/indexer/internal/alicenet"
 	"github.com/alicenet/indexer/internal/flagz"
+	"github.com/alicenet/indexer/internal/logz"
 	"github.com/alicenet/indexer/internal/service/worker"
 )
 
 func main() {
+	logz.Notice("starting up")
+
 	api := flag.String("api", "edge.staging.alice.net", "api hosting alicenet")
 	database := flag.String("database", "projects/mn-test-298216/instances/alicenet/databases/indexer", "spanner database")
 
@@ -28,14 +30,19 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go func() {
-		<-signals
+		logz.Debug("waiting on signals")
+
+		s := <-signals
+		logz.WithDetail("signal", s).Info("got shutdown signal")
+
 		cancel()
 	}()
 
-	fmt.Println("connecting to spanner")
+	logz.WithDetail("database", *database).Info("connecting to spanner")
 
 	spannerClient, err := spanner.NewClient(ctx, *database)
 	if err != nil {
+		logz.WithDetail("err", err).Criticalf("could not conect to spanner: %v", err)
 		panic(err)
 	}
 
@@ -46,4 +53,6 @@ func main() {
 	worker := worker.New(alicenetClient, stores)
 
 	worker.Run(ctx)
+
+	logz.Notice("shutting down")
 }

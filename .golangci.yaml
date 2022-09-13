@@ -19,6 +19,7 @@ linters:
     - execinquery
     - exhaustive
     - exportloopref
+    - forbidigo
     - forcetypeassert
     # - funlen # Some stuff to work out
     - gci
@@ -72,6 +73,12 @@ linters:
     - whitespace
     - wsl
 linters-settings:
+  forbidigo:
+    forbid:
+      - 'fmt\.Print.*'
+      - 'log\.Fatal.*'
+      - 'log\.Panic.*'
+      - 'log\.Print.*'
   gci:
     sections:
       - standard
