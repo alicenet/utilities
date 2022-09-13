@@ -3,7 +3,6 @@ package worker
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/big"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 
 	"github.com/alicenet/alicenet/proto"
 	"github.com/alicenet/indexer/internal/alicenet"
+	"github.com/alicenet/indexer/internal/logz"
 )
 
 // Wait time between checks against alicenet.
@@ -45,7 +45,7 @@ func New(client alicenet.Interface, stores *alicenet.Stores) *Service {
 func (s *Service) Run(ctx context.Context) {
 	for {
 		if err := s.process(ctx); err != nil {
-			fmt.Printf("run error: %v\n", err)
+			logz.WithDetail("err", err).Errorf("run error: %v", err)
 		}
 
 		select {
@@ -58,14 +58,12 @@ func (s *Service) Run(ctx context.Context) {
 
 // process any new blocks found in alicenet.
 func (s *Service) process(ctx context.Context) error {
-	fmt.Println("highest: ", s.highest)
-
 	current, err := s.client.Height(ctx)
 	if err != nil {
 		return fmt.Errorf("processing: %w", err)
 	}
 
-	fmt.Println("current height: ", current)
+	logz.WithDetails(logz.Details{"current": current, "highest": s.highest}).Info()
 
 	for height := s.highest; height <= int(current); height++ {
 		blockHeader, err := s.client.BlockHeader(ctx, uint32(height))
@@ -81,7 +79,7 @@ func (s *Service) process(ctx context.Context) error {
 			txn, err := s.client.Transaction(ctx, hash)
 			if err != nil {
 				// Transaction has likely been purged from the chain. Mark it as missing and continue.
-				log.Printf("transaction %s missing, continuing\n", hash)
+				logz.WithDetail("hash", hash).Warning("transaction missing, continuing")
 
 				if err := s.pushMissingTransaction(ctx, height, hash); err != nil {
 					return err
@@ -103,7 +101,7 @@ func (s *Service) process(ctx context.Context) error {
 
 // pushBlock to the permanent stores.
 func (s *Service) pushBlock(ctx context.Context, blockHeader *proto.BlockHeader) error {
-	fmt.Printf("got header: %+v\n", blockHeader)
+	logz.WithDetail("header", blockHeader).Info("got header")
 
 	block := createBlock(blockHeader)
 
@@ -139,7 +137,7 @@ func (s *Service) pushTransaction(
 	hash string,
 	txn *alicenet.MinedTransactionResponse,
 ) error {
-	fmt.Printf("got transaction: %+v\n", txn)
+	logz.WithDetail("transaction", txn).Info("got transaction")
 
 	newTx := alicenet.Transaction{
 		Height:          int64(height),
@@ -168,7 +166,7 @@ func (s *Service) pushMissingTransaction(
 	height int,
 	hash string,
 ) error {
-	fmt.Printf("writing missing transaction: %+v\n", hash)
+	logz.WithDetail("hash", hash).Info("writing missing transaction")
 
 	missing := true
 

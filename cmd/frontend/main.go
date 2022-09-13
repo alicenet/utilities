@@ -20,6 +20,7 @@ import (
 	"github.com/alicenet/indexer/internal/alicenet"
 	"github.com/alicenet/indexer/internal/flagz"
 	"github.com/alicenet/indexer/internal/handler"
+	"github.com/alicenet/indexer/internal/logz"
 	"github.com/alicenet/indexer/internal/service"
 	"github.com/alicenet/indexer/internal/service/frontend"
 )
@@ -30,6 +31,8 @@ const (
 )
 
 func main() {
+	logz.Notice("starting up")
+
 	port := flag.Uint64("port", defaultPort, "port to listen on")
 	database := flag.String("database", "projects/mn-test-298216/instances/alicenet/databases/indexer", "spanner database")
 
@@ -37,14 +40,15 @@ func main() {
 
 	addr := fmt.Sprintf(":%d", *port)
 
-	fmt.Println("running frontend")
+	logz.Info("creating GRPC server")
 
 	ctx, grpcServer := service.NewServer()
 
-	fmt.Println("connecting to spanner")
+	logz.WithDetail("database", *database).Info("connecting to spanner")
 
 	spannerClient, err := spanner.NewClient(ctx, *database)
 	if err != nil {
+		logz.WithDetail("err", err).Criticalf("could not conect to spanner: %v", err)
 		panic(err)
 	}
 
@@ -58,6 +62,7 @@ func main() {
 
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 	if err := alicev1.RegisterAliceServiceHandlerFromEndpoint(ctx, mux, addr, opts); err != nil {
+		logz.WithDetail("err", err).Criticalf("could not register gateway: %v", err)
 		panic(err)
 	}
 
@@ -72,14 +77,24 @@ func main() {
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		<-signals
+		logz.Debug("waiting on signals")
 
-		_ = httpServer.Shutdown(context.Background())
+		s := <-signals
+		logz.WithDetail("signal", s).Info("got shutdown signal")
+
+		if err := httpServer.Shutdown(context.Background()); err != nil {
+			logz.WithDetail("err", err).Errorf("shutting down http server: %v", err)
+		}
 	}()
+
+	logz.WithDetail("address", addr).Info("listening")
 
 	if err := httpServer.ListenAndServe(); err != nil {
 		if !errors.Is(err, http.ErrServerClosed) {
+			logz.WithDetail("err", err).Criticalf("listening: %v", err)
 			panic(err)
 		}
+
+		logz.Notice("shutting down")
 	}
 }
