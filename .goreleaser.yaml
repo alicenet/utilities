@@ -1,0 +1,57 @@
+# See documentation at https://goreleaser.com
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - main: ./cmd/frontend
+    binary: indexer-frontend
+    id: frontend
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+  - main: ./cmd/worker
+    binary: indexer-worker
+    id: worker
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+dockers:
+  - id: frontend
+    goos: linux
+    goarch: amd64
+    image_templates:
+      - "ghcr.io/alicenet/{{ .ProjectName }}/frontend:latest"
+      - "ghcr.io/alicenet/{{ .ProjectName }}/frontend:{{ .Tag }}"
+    dockerfile: ./cmd/frontend/release.dockerfile
+  - id: worker
+    goos: linux
+    goarch: amd64
+    image_templates:
+      - "ghcr.io/alicenet/{{ .ProjectName }}/worker:latest"
+      - "ghcr.io/alicenet/{{ .ProjectName }}/worker:{{ .Tag }}"
+    dockerfile: ./cmd/worker/release.dockerfile
+gomod:
+  proxy: true
+archives:
+  - builds:
+      - frontend
+      - worker
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      386: i386
+      amd64: x86_64
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  skip: true
+release:
+  mode: keep-existing
