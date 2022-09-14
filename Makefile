@@ -29,7 +29,7 @@ format:
 .PHONY: generate
 generate:
 	find . -iname \*.pb.go \
-	    -o -iname \*.pb.gw.go \
+	    -o -iname \*.pb.\*.go \
 		-o -iname \*.mockgen.go \
 		-o -iname \*.swagger.json \
 		-exec rm -rf {} \;
