@@ -26,15 +26,15 @@ dockers:
     goos: linux
     goarch: amd64
     image_templates:
-      - "https://ghcr.io/alicenet/{{ .ProjectName }}/frontend:latest"
-      - "https://ghcr.io/alicenet/{{ .ProjectName }}/frontend:{{ .Tag }}"
+      - "ghcr.io/alicenet/{{ .ProjectName }}/frontend:latest"
+      - "ghcr.io/alicenet/{{ .ProjectName }}/frontend:{{ .Tag }}"
     dockerfile: ./cmd/frontend/Dockerfile
   - id: worker
     goos: linux
     goarch: amd64
     image_templates:
-      - "https://ghcr.io/alicenet/{{ .ProjectName }}/worker:latest"
-      - "https://ghcr.io/alicenet/{{ .ProjectName }}/worker:{{ .Tag }}"
+      - "ghcr.io/alicenet/{{ .ProjectName }}/worker:latest"
+      - "ghcr.io/alicenet/{{ .ProjectName }}/worker:{{ .Tag }}"
     dockerfile: ./cmd/worker/Dockerfile
 gomod:
   proxy: true
