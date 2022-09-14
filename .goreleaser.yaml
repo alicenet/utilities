@@ -28,14 +28,14 @@ dockers:
     image_templates:
       - "ghcr.io/alicenet/{{ .ProjectName }}/frontend:latest"
       - "ghcr.io/alicenet/{{ .ProjectName }}/frontend:{{ .Tag }}"
-    dockerfile: ./cmd/frontend/Dockerfile
+    dockerfile: ./cmd/frontend/release.dockerfile
   - id: worker
     goos: linux
     goarch: amd64
     image_templates:
       - "ghcr.io/alicenet/{{ .ProjectName }}/worker:latest"
       - "ghcr.io/alicenet/{{ .ProjectName }}/worker:{{ .Tag }}"
-    dockerfile: ./cmd/worker/Dockerfile
+    dockerfile: ./cmd/worker/release.dockerfile
 gomod:
   proxy: true
 archives:
