@@ -4,6 +4,7 @@ before:
     - go mod tidy
 builds:
   - main: ./cmd/frontend
+    id: frontend
     mod_timestamp: "{{ .CommitTimestamp }}"
     env:
       - CGO_ENABLED=0
@@ -11,6 +12,7 @@ builds:
       - linux
       - darwin
   - main: ./cmd/worker
+    id: worker
     mod_timestamp: "{{ .CommitTimestamp }}"
     env:
       - CGO_ENABLED=0
@@ -18,13 +20,15 @@ builds:
       - linux
       - darwin
 dockers:
-  - goos: linux
+  - id: frontend
+    goos: linux
     goarch: amd64
     image_templates:
       - "https://ghcr.io/alicenet/{{ .ProjectName }}/frontend:latest"
       - "https://ghcr.io/alicenet/{{ .ProjectName }}/frontend:{{ .Tag }}"
     dockerfile: ./cmd/frontend/Dockerfile
-  - goos: linux
+  - id: worker
+    goos: linux
     goarch: amd64
     image_templates:
       - "https://ghcr.io/alicenet/{{ .ProjectName }}/worker:latest"
