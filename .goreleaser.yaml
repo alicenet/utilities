@@ -37,7 +37,10 @@ dockers:
 gomod:
   proxy: true
 archives:
-  - replacements:
+  - builds:
+      - frontend
+      - worker
+    replacements:
       darwin: Darwin
       linux: Linux
       386: i386
