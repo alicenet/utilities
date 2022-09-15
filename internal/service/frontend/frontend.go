@@ -9,9 +9,9 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	alicev1 "github.com/alicenet/indexer/api/alice/v1"
-	"github.com/alicenet/indexer/internal/alicenet"
-	"github.com/alicenet/indexer/internal/logz"
+	alicev1 "github.com/alicenet/utilities/api/alice/v1"
+	"github.com/alicenet/utilities/internal/alicenet"
+	"github.com/alicenet/utilities/internal/logz"
 )
 
 const (

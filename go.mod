@@ -1,4 +1,4 @@
-module github.com/alicenet/indexer
+module github.com/alicenet/utilities
 
 go 1.19
 

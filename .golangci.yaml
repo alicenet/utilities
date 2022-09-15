@@ -86,10 +86,10 @@ linters-settings:
       - prefix(github.com/alicenet)
   gofumpt:
     lang-version: "1.19"
-    module-path: github.com/alicenet/indexer
+    module-path: github.com/alicenet/utilities
     extra-rules: true
   importas:
     no-extra-aliases: true
     alias:
-      - pkg: github.com/alicenet/indexer/api/(\w+)/(v[\w\d]+)
+      - pkg: github.com/alicenet/utilities/api/(\w+)/(v[\w\d]+)
         alias: $1$2
