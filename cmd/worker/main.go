@@ -10,10 +10,10 @@ import (
 	"cloud.google.com/go/spanner"
 	_ "github.com/golang-migrate/migrate/v4/database/spanner"
 
-	"github.com/alicenet/indexer/internal/alicenet"
-	"github.com/alicenet/indexer/internal/flagz"
-	"github.com/alicenet/indexer/internal/logz"
-	"github.com/alicenet/indexer/internal/service/worker"
+	"github.com/alicenet/utilities/internal/alicenet"
+	"github.com/alicenet/utilities/internal/flagz"
+	"github.com/alicenet/utilities/internal/logz"
+	"github.com/alicenet/utilities/internal/service/worker"
 )
 
 func main() {

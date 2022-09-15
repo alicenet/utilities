@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alicenet/indexer/internal/logz/severity"
+	"github.com/alicenet/utilities/internal/logz/severity"
 )
 
 // Set this sufficiently high or weird things happen when the buffer needs to be increased.

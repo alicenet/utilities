@@ -16,13 +16,13 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	alicev1 "github.com/alicenet/indexer/api/alice/v1"
-	"github.com/alicenet/indexer/internal/alicenet"
-	"github.com/alicenet/indexer/internal/flagz"
-	"github.com/alicenet/indexer/internal/handler"
-	"github.com/alicenet/indexer/internal/logz"
-	"github.com/alicenet/indexer/internal/service"
-	"github.com/alicenet/indexer/internal/service/frontend"
+	alicev1 "github.com/alicenet/utilities/api/alice/v1"
+	"github.com/alicenet/utilities/internal/alicenet"
+	"github.com/alicenet/utilities/internal/flagz"
+	"github.com/alicenet/utilities/internal/handler"
+	"github.com/alicenet/utilities/internal/logz"
+	"github.com/alicenet/utilities/internal/service"
+	"github.com/alicenet/utilities/internal/service/frontend"
 )
 
 const (

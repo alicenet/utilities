@@ -14,6 +14,7 @@ To learn more, check out our official [website](https://www.alice.net/) and join
 ## Indexer
 
 The Indexer is designed to process all events on every layer for AliceNet and make it available for easy access, similar to [Etherscan](https://etherscan.io) does for Ethereum.
+
 ### Worker
 
 The worker is designed to run continuously and poll the state of AliceNet on all layers.

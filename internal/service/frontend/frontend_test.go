@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	alicev1 "github.com/alicenet/indexer/api/alice/v1"
+	alicev1 "github.com/alicenet/utilities/api/alice/v1"
 )
 
 func TestListStores(t *testing.T) {

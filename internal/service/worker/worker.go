@@ -9,8 +9,8 @@ import (
 	"cloud.google.com/go/spanner"
 
 	"github.com/alicenet/alicenet/proto"
-	"github.com/alicenet/indexer/internal/alicenet"
-	"github.com/alicenet/indexer/internal/logz"
+	"github.com/alicenet/utilities/internal/alicenet"
+	"github.com/alicenet/utilities/internal/logz"
 )
 
 // Wait time between checks against alicenet.

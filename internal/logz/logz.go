@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/exp/maps"
 
-	"github.com/alicenet/indexer/internal/logz/severity"
+	"github.com/alicenet/utilities/internal/logz/severity"
 )
 
 // A Logger that outputs structured logs.

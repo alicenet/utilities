@@ -12,7 +12,7 @@ import (
 	"cloud.google.com/go/spanner"
 
 	"github.com/alicenet/alicenet/proto"
-	"github.com/alicenet/indexer/internal/store"
+	"github.com/alicenet/utilities/internal/store"
 )
 
 // Paths to access various alicenet functionality.
