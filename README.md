@@ -1,18 +1,19 @@
 # AliceNet Indexer
 
-[![GitHub Release](https://img.shields.io/github/v/release/alicenet/indexer)](https://github.com/alicenet/indexer/releases)
-[![License](https://img.shields.io/github/license/alicenet/indexer)](./LICENSE)
-[![codecov](https://codecov.io/gh/alicenet/indexer/branch/main/graph/badge.svg?token=GSJJFZB9WV)](https://codecov.io/gh/alicenet/indexer)
+[![GitHub Release](https://img.shields.io/github/v/release/alicenet/utilities)](https://github.com/alicenet/utilities/releases)
+[![License](https://img.shields.io/github/license/alicenet/utilities)](./LICENSE)
+[![codecov](https://codecov.io/gh/alicenet/utilities/branch/main/graph/badge.svg?token=GSJJFZB9WV)](https://codecov.io/gh/alicenet/utilities)
 [![Discord](https://img.shields.io/badge/Discord-7289DA?logo=discord&logoColor=white)](https://discord.gg/bkhW2KUWDu)
 
 AliceNet is a Proof-Of-Stake, UTXO based blockchain written in golang that enables high-speed bridging between Layer 1 and Layer 2 protocols while emphasizing strong security and identity standards.
 
-The Indexer is designed to process all events on every layer for AliceNet and make it available for easy access, similar to [Etherscan](https://etherscan.io) does for Ethereum.
+This repository provides a number of utilities helpful for working with/hosting AliceNet.
 
 To learn more, check out our official [website](https://www.alice.net/) and join our official [Discord community](https://discord.gg/bkhW2KUWDu).
 
-## Indexer Components
+## Indexer
 
+The Indexer is designed to process all events on every layer for AliceNet and make it available for easy access, similar to [Etherscan](https://etherscan.io) does for Ethereum.
 ### Worker
 
 The worker is designed to run continuously and poll the state of AliceNet on all layers.
