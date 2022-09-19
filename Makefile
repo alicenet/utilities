@@ -1,3 +1,4 @@
+PLATFORM ?= linux/amd64
 REGISTRY ?= us-central1-docker.pkg.dev/mn-test-298216/alicenet
 MIGRATION_SOURCE ?= file://internal/migrations
 SPANNER_DATABASE ?= projects/mn-test-298216/instances/alicenet/databases/indexer
@@ -44,13 +45,15 @@ setup:
 
 .PHONY: docker-build
 docker-build:
-	docker build --platform linux/amd64 -f cmd/frontend/Dockerfile -t $(REGISTRY)/indexer/frontend .
-	docker build --platform linux/amd64 -f cmd/worker/Dockerfile -t $(REGISTRY)/indexer/worker .
+	docker build --platform $(PLATFORM) -f cmd/frontend/Dockerfile -t $(REGISTRY)/indexer/frontend .
+	docker build --platform $(PLATFORM) -f cmd/worker/Dockerfile -t $(REGISTRY)/indexer/worker .
+	docker build --platform $(PLATFORM) -t $(REGISTRY)/json-rpc-proxy cmd/json-rpc-proxy/Dockerfile
 
 .PHONY: docker-push
 docker-push:
 	docker push $(REGISTRY)/indexer/frontend
 	docker push $(REGISTRY)/indexer/worker
+	docker push $(REGISTRY)/json-rpc-proxy
 
 .PHONY: db-up
 db-up:

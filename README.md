@@ -1,4 +1,4 @@
-# AliceNet Indexer
+# AliceNet Utilities
 
 [![GitHub Release](https://img.shields.io/github/v/release/alicenet/utilities)](https://github.com/alicenet/utilities/releases)
 [![License](https://img.shields.io/github/license/alicenet/utilities)](./LICENSE)
@@ -25,6 +25,10 @@ limited to just [Google Cloud Spanner](https://cloud.google.com/spanner)).
 
 The frontend runs a combination GRPC/REST endpoint that can be called to return the
 information stored by the worker.
+
+## JSON RPC Proxy
+
+A container image that will proxy JSON RPC requests to a remote path (not just host). This allows for hosting a proxy that will include an account key for a service such as [infura](https://infura.io).
 
 ## How to contribute
 
