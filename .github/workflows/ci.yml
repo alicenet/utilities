@@ -53,6 +53,7 @@ jobs:
           images: ghcr.io/alicenet/json-rpc-proxy
       - uses: docker/build-push-action@v3
         with:
-          context: "{{defaultContext}}:cmd/json-rpc-proxy"
+          context: "./cmd/json-rpc-proxy"
           push: false
-          tags: json-rpc-proxy:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
