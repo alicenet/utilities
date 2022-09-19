@@ -36,7 +36,7 @@ jobs:
       - uses: docker/metadata-action@v4
         with:
           images: ghcr.io/alicenet/json-rpc-proxy
-      - uses: docker/build-push-action
+      - uses: docker/build-push-action@v4
         with:
           context: "{{defaultContext}}:cmd/json-rpc-proxy"
           push: true
