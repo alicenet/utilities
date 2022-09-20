@@ -33,3 +33,12 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/alicenet/json-rpc-proxy
+      - uses: docker/build-push-action@v3
+        with:
+          context: "{{defaultContext}}:cmd/json-rpc-proxy"
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

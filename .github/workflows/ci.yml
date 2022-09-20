@@ -1,4 +1,4 @@
-name: go
+name: ci
 
 on:
   push:
@@ -48,3 +48,12 @@ jobs:
           args: release --snapshot --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/alicenet/json-rpc-proxy
+      - uses: docker/build-push-action@v3
+        with:
+          context: "./cmd/json-rpc-proxy"
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
