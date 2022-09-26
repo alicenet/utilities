@@ -3,7 +3,7 @@ module github.com/alicenet/utilities
 go 1.19
 
 require (
-	cloud.google.com/go/spanner v1.38.0
+	cloud.google.com/go/spanner v1.39.0
 	github.com/alicenet/alicenet v0.0.0-20220702030912-d726ce405a58
 	github.com/bufbuild/buf v1.8.0
 	github.com/envoyproxy/protoc-gen-validate v0.6.8
@@ -15,7 +15,7 @@ require (
 	golang.org/x/net v0.0.0-20220909164309-bea034e7d591
 	golang.org/x/tools v0.1.12
 	google.golang.org/api v0.97.0
-	google.golang.org/genproto v0.0.0-20220829175752-36a9c930ecbf
+	google.golang.org/genproto v0.0.0-20220916134934-764224ccc2d1
 	google.golang.org/grpc v1.49.0
 	google.golang.org/protobuf v1.28.1
 )
@@ -78,7 +78,7 @@ require (
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.22.0 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
-	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094 // indirect
+	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
 	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde // indirect
 	golang.org/x/sys v0.0.0-20220908150016-7ac13a9a928d // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
