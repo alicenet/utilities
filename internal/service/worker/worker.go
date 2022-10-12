@@ -14,8 +14,10 @@ import (
 )
 
 // Wait time between checks against alicenet.
-const loopWait = 5 * time.Second
-const baseHex = 16
+const (
+	loopWait = 5 * time.Second
+	baseHex  = 16
+)
 
 // ParseError indicates a big.Int could not be parsed.
 type ParseError string
