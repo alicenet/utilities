@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"cloud.google.com/go/spanner"
+	"contrib.go.opencensus.io/exporter/stackdriver"
 	_ "github.com/golang-migrate/migrate/v4/database/spanner"
 
 	"github.com/alicenet/utilities/internal/alicenet"
@@ -21,6 +22,7 @@ func main() {
 
 	api := flag.String("api", "edge.staging.alice.net", "api hosting alicenet")
 	database := flag.String("database", "projects/mn-test-298216/instances/alicenet/databases/indexer", "spanner database")
+	metrics := flag.Bool("exportmetrics", false, "whether or not to export metrics")
 
 	flagz.Parse()
 
@@ -37,6 +39,23 @@ func main() {
 
 		cancel()
 	}()
+
+	if *metrics {
+		logz.Info("setting up metrics exporter")
+
+		exporter, err := stackdriver.NewExporter(stackdriver.Options{})
+		if err != nil {
+			panic(err)
+		}
+
+		defer exporter.Flush()
+
+		if err := exporter.StartMetricsExporter(); err != nil {
+			panic(err)
+		}
+
+		defer exporter.StopMetricsExporter()
+	}
 
 	logz.WithDetail("database", *database).Info("connecting to spanner")
 

@@ -47,7 +47,7 @@ setup:
 docker-build:
 	docker build --platform $(PLATFORM) -f cmd/frontend/Dockerfile -t $(REGISTRY)/indexer/frontend .
 	docker build --platform $(PLATFORM) -f cmd/worker/Dockerfile -t $(REGISTRY)/indexer/worker .
-	docker build --platform $(PLATFORM) -t $(REGISTRY)/json-rpc-proxy cmd/json-rpc-proxy/Dockerfile
+	docker build --platform $(PLATFORM) -t $(REGISTRY)/json-rpc-proxy cmd/json-rpc-proxy/
 
 .PHONY: docker-push
 docker-push:

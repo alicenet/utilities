@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"sync"
 	"time"
 
 	"cloud.google.com/go/spanner"
+	"go.opencensus.io/stats"
+	"go.opencensus.io/stats/view"
 
 	"github.com/alicenet/alicenet/proto"
 	"github.com/alicenet/utilities/internal/alicenet"
@@ -17,6 +20,36 @@ import (
 const (
 	loopWait = 5 * time.Second
 	baseHex  = 16
+)
+
+var (
+	//nolint:gochecknoglobals // Stats exempt
+	highestBlock = stats.Int64("highest_block", "The highest seen block", "1")
+	//nolint:gochecknoglobals // Stats exempt
+	currentBlock = stats.Int64("current_block", "The current processed block", "1")
+	//nolint:gochecknoglobals // Stats exempt
+	views = []*view.View{
+		{
+			Name:        "highest_block_last",
+			Measure:     highestBlock,
+			Description: "The highest block seen",
+			Aggregation: view.LastValue(),
+		},
+		{
+			Name:        "current_block_last",
+			Measure:     currentBlock,
+			Description: "The current block seen",
+			Aggregation: view.LastValue(),
+		},
+		{
+			Name:        "blocks_count",
+			Measure:     currentBlock,
+			Description: "The number of blocks processed",
+			Aggregation: view.Count(),
+		},
+	}
+	//nolint:gochecknoglobals // Stats exempt
+	setupStats sync.Once
 )
 
 // ParseError indicates a big.Int could not be parsed.
@@ -36,6 +69,14 @@ type Service struct {
 
 // New Service from an alicenet client and stores.
 func New(client alicenet.Interface, stores *alicenet.Stores) *Service {
+	setupStats.Do(func() {
+		for i := range views {
+			if err := view.Register(views[i]); err != nil {
+				panic(err)
+			}
+		}
+	})
+
 	return &Service{
 		client:  client,
 		stores:  stores,
@@ -66,8 +107,11 @@ func (s *Service) process(ctx context.Context) error {
 	}
 
 	logz.WithDetails(logz.Details{"current": current, "highest": s.highest}).Info()
+	stats.Record(ctx, highestBlock.M(int64(current)))
 
 	for height := s.highest; height <= int(current); height++ {
+		stats.Record(ctx, currentBlock.M(int64(height)))
+
 		blockHeader, err := s.client.BlockHeader(ctx, uint32(height))
 		if err != nil {
 			return fmt.Errorf("processing: %w", err)
