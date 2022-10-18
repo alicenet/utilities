@@ -7,9 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 
 	"cloud.google.com/go/spanner"
+	"go.opencensus.io/plugin/ochttp"
+	"go.opencensus.io/stats/view"
 
 	"github.com/alicenet/alicenet/proto"
 	"github.com/alicenet/utilities/internal/store"
@@ -21,6 +24,9 @@ const (
 	blockHeaderPath      = "v1/get-block-header"
 	minedTransactionPath = "v1/get-mined-transaction"
 )
+
+//nolint:gochecknoglobals // Needed for metrics
+var metricsSetup sync.Once
 
 // An APIError returned from alicenet.
 type APIError struct {
@@ -46,6 +52,7 @@ type Interface interface {
 // Note: This is a temporary solution as the GRPC endpoint is currently unavailable.
 type Client struct {
 	baseURL string
+	client  *http.Client
 }
 
 // Ensure Client matches the package Interface.
@@ -53,11 +60,19 @@ var _ Interface = &Client{}
 
 // Connect to AliceNet.
 func Connect(baseURL string) *Client {
-	return &Client{baseURL: baseURL}
+	metricsSetup.Do(func() {
+		if err := view.Register(ochttp.DefaultClientViews...); err != nil {
+			panic(err)
+		}
+	})
+
+	octr := &ochttp.Transport{}
+
+	return &Client{baseURL: baseURL, client: &http.Client{Transport: octr}}
 }
 
 // do handles boilerplate of calling the alicenet local state API.
-func do[In, Out any](ctx context.Context, base, path string, request In) (Out, error) {
+func do[In, Out any](ctx context.Context, client *http.Client, base, path string, request In) (Out, error) {
 	url := fmt.Sprintf("https://%s/%s", base, path)
 
 	var out Out
@@ -74,7 +89,7 @@ func do[In, Out any](ctx context.Context, base, path string, request In) (Out, e
 		return out, fmt.Errorf("request: %w", err)
 	}
 
-	rawResp, err := http.DefaultClient.Do(req)
+	rawResp, err := client.Do(req)
 	if err != nil {
 		return out, fmt.Errorf("response: %w", err)
 	}
@@ -101,7 +116,7 @@ func (c *Client) Height(ctx context.Context) (uint32, error) {
 	resp, err := do[
 		proto.BlockNumberRequest,
 		proto.BlockNumberResponse,
-	](ctx, c.baseURL, blockNumberPath, proto.BlockNumberRequest{})
+	](ctx, c.client, c.baseURL, blockNumberPath, proto.BlockNumberRequest{})
 	if err != nil {
 		return 0, fmt.Errorf("height: %w", err)
 	}
@@ -114,7 +129,7 @@ func (c *Client) BlockHeader(ctx context.Context, height uint32) (*proto.BlockHe
 	resp, err := do[
 		proto.BlockHeaderRequest,
 		proto.BlockHeaderResponse,
-	](ctx, c.baseURL, blockHeaderPath, proto.BlockHeaderRequest{Height: height})
+	](ctx, c.client, c.baseURL, blockHeaderPath, proto.BlockHeaderRequest{Height: height})
 	if err != nil {
 		return nil, fmt.Errorf("header: %w", err)
 	}
@@ -127,7 +142,7 @@ func (c *Client) Transaction(ctx context.Context, hash string) (*MinedTransactio
 	resp, err := do[
 		proto.MinedTransactionRequest,
 		MinedTransactionResponse,
-	](ctx, c.baseURL, minedTransactionPath, proto.MinedTransactionRequest{TxHash: hash})
+	](ctx, c.client, c.baseURL, minedTransactionPath, proto.MinedTransactionRequest{TxHash: hash})
 	if err != nil {
 		return nil, fmt.Errorf("transaction: %w", err)
 	}
