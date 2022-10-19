@@ -1,3 +1,4 @@
+// Package alicenet contains all logic and data models for interacting with alicenet.
 package alicenet
 
 import (

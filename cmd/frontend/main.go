@@ -1,3 +1,8 @@
+/*
+Frontend hosts the API that consumers of the alicenet indexer use.
+
+It uses a shared Spanner database populated by the indexer worker process.
+*/
 package main
 
 import (

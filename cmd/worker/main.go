@@ -1,3 +1,8 @@
+/*
+Worker continuously scans alicenet to index blocks and transactions.
+
+It populates a shared Spanner database that the indexer frontend serves from.
+*/
 package main
 
 import (
@@ -9,7 +14,6 @@ import (
 
 	"cloud.google.com/go/spanner"
 	"contrib.go.opencensus.io/exporter/stackdriver"
-	_ "github.com/golang-migrate/migrate/v4/database/spanner"
 
 	"github.com/alicenet/utilities/internal/alicenet"
 	"github.com/alicenet/utilities/internal/flagz"

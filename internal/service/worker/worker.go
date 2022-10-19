@@ -1,3 +1,4 @@
+// Package worker implements the logic for the indexer worker.
 package worker
 
 import (
