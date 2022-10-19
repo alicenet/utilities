@@ -1,3 +1,4 @@
+// Package logz supplies a simple structured logger compatible with GCP logging.
 package logz
 
 import (
@@ -35,6 +36,7 @@ type Logger interface {
 	WithDetails(Details) Logger
 }
 
+// Details to be included with a log.
 type Details map[string]any
 
 // sourceLocation of where the entry was logged from in code.

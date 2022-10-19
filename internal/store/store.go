@@ -1,3 +1,4 @@
+// Package store streamlines the process of working with resources in databases.
 package store
 
 import (

@@ -1,3 +1,4 @@
+// Package migrations handles running Spanner emulator/migrations to support testing.
 package migrations
 
 import (
@@ -11,6 +12,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 )
 
+// Settings for running the spanner emulator.
 const (
 	emulatorAddr        = "localhost:0"
 	emulatorDatabase    = "projects/ignored/instances/ignored/databases/ignored"

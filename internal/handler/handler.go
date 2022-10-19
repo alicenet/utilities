@@ -1,3 +1,4 @@
+// Package handler contains utilities to more easily host services.
 package handler
 
 import (
@@ -9,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Headers and responses for CORS.
 const (
 	AllowHeadersKey = "Access-Control-Allow-Headers"
 	AllowedHeaders  = "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, ResponseType"

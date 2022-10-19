@@ -1,3 +1,4 @@
+// Package frontend implements the logic for the indexer frontend.
 package frontend
 
 import (

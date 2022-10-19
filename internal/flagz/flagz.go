@@ -1,3 +1,10 @@
+// Package flagz adds functionality to the standard flag package.
+// It will populate flags from both command line and environment variables.
+//
+// The order of precedence:
+// - Environment variables
+// - Command line flag
+// - Default values
 package flagz
 
 import (

@@ -1,3 +1,4 @@
+// Package service handles running GRPC services gracefully.
 package service
 
 import (
