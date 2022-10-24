@@ -10,13 +10,13 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v0.6.13
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/golang/mock v1.6.0
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.12.0
 	go.opencensus.io v0.23.0
 	golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561
 	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b
 	golang.org/x/tools v0.1.12
 	google.golang.org/api v0.99.0
-	google.golang.org/genproto v0.0.0-20221014173430-6e2ab493f96b
+	google.golang.org/genproto v0.0.0-20221014213838-99cd37c6964a
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
 )
