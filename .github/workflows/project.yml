@@ -1,0 +1,25 @@
+name: project
+
+on:
+  issues:
+    types:
+      - opened
+      - transferred
+      - labeled
+  pull_request:
+    types:
+      - opened
+      - labeled
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      repository-projects: write
+    steps:
+      - uses: actions/add-to-project@v0.3.0
+        with:
+          project-url: https://github.com/orgs/alicenet/projects/4
+          github-token: ${{ secrets.GITHUB_TOKEN }}
