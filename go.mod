@@ -11,7 +11,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/golang/mock v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.12.0
-	go.opencensus.io v0.23.0
+	go.opencensus.io v0.24.0
 	golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561
 	golang.org/x/net v0.1.0
 	golang.org/x/tools v0.2.0
