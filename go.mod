@@ -3,7 +3,7 @@ module github.com/alicenet/utilities
 go 1.19
 
 require (
-	cloud.google.com/go/spanner v1.40.0
+	cloud.google.com/go/spanner v1.41.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.14
 	github.com/alicenet/alicenet v0.0.0-20220702030912-d726ce405a58
 	github.com/bufbuild/buf v1.9.0
@@ -15,16 +15,17 @@ require (
 	golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561
 	golang.org/x/net v0.2.0
 	golang.org/x/tools v0.3.0
-	google.golang.org/api v0.103.0
-	google.golang.org/genproto v0.0.0-20221114212237-e4508ebdbee1
+	google.golang.org/api v0.104.0
+	google.golang.org/genproto v0.0.0-20221206210731-b1a01be3a5f6
 	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8
 )
 
 require (
 	cloud.google.com/go v0.105.0 // indirect
-	cloud.google.com/go/compute v1.12.1 // indirect
-	cloud.google.com/go/compute/metadata v0.2.1 // indirect
+	cloud.google.com/go/compute v1.13.0 // indirect
+	cloud.google.com/go/compute/metadata v0.2.2 // indirect
+	cloud.google.com/go/iam v0.8.0 // indirect
 	cloud.google.com/go/longrunning v0.3.0 // indirect
 	cloud.google.com/go/monitoring v1.8.0 // indirect
 	cloud.google.com/go/trace v1.4.0 // indirect
@@ -90,7 +91,7 @@ require (
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/term v0.2.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
