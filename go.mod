@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/spanner v1.42.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.14
 	github.com/alicenet/alicenet v0.0.0-20220702030912-d726ce405a58
-	github.com/bufbuild/buf v1.11.0
+	github.com/bufbuild/buf v1.12.0
 	github.com/envoyproxy/protoc-gen-validate v0.9.1
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/golang/mock v1.6.0
@@ -32,7 +32,7 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.116 // indirect
-	github.com/bufbuild/connect-go v1.4.0 // indirect
+	github.com/bufbuild/connect-go v1.4.1 // indirect
 	github.com/bufbuild/protocompile v0.1.0 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.4.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
