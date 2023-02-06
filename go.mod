@@ -3,7 +3,7 @@ module github.com/alicenet/utilities
 go 1.19
 
 require (
-	cloud.google.com/go/spanner v1.43.0
+	cloud.google.com/go/spanner v1.44.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.14
 	github.com/alicenet/alicenet v0.0.0-20220702030912-d726ce405a58
 	github.com/bufbuild/buf v1.13.1
