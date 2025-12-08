@@ -48,7 +48,7 @@ jobs:
           args: release --snapshot --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/metadata-action@v4
+      - uses: docker/metadata-action@v5
         with:
           images: ghcr.io/alicenet/json-rpc-proxy
       - uses: docker/build-push-action@v4
