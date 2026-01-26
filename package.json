@@ -10,6 +10,6 @@
   "license": "ISC",
   "devDependencies": {
     "husky": "^8.0.1",
-    "prettier": "^2.7.1"
+    "prettier": "^3.8.1"
   }
 }
